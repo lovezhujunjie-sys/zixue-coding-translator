@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>代码翻译官 · 小白也能看懂代码</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;900&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#2b2420;
+    --paper:#f4ece0;
+    --paper-2:#efe4d4;
+    --accent:#e0533a;      /* 朱砂红 */
+    --accent-2:#3a7d5d;    /* 墨绿 */
+    --gold:#d39a3a;        /* 赭黄 */
+    --blue:#3f6c9e;        /* 靛蓝 */
+    --soft:#8a7d6e;
+    --card:#fffaf2;
+    --line:#d8c9b4;
+    --code-bg:#2b2420;
+    --code-paper:#f7f1e6;
+    --shadow:0 10px 40px rgba(43,36,32,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Noto Sans SC',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(224,83,58,.04), transparent 40%),
+      radial-gradient(circle at 85% 60%, rgba(58,125,93,.05), transparent 45%);
+  }
+  /* 顶部纸张纹理感 */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  }
+
+  /* ===== 顶部标题区 ===== */
+  header{
+    position:relative;z-index:2;text-align:center;
+    padding:64px 24px 40px;max-width:900px;margin:0 auto;
+  }
+  .stamp{
+    display:inline-block;font-family:'Noto Serif SC',serif;font-weight:900;
+    color:#fff;background:var(--accent);padding:4px 14px;border-radius:6px;
+    font-size:13px;letter-spacing:4px;transform:rotate(-2deg);
+    box-shadow:2px 3px 0 rgba(43,36,32,.2);margin-bottom:20px;
+  }
+  h1{
+    font-family:'Noto Serif SC',serif;font-weight:900;
+    font-size:clamp(34px,7vw,58px);line-height:1.15;letter-spacing:1px;
+  }
+  h1 .hl{position:relative;color:var(--accent)}
+  h1 .hl::after{
+    content:"";position:absolute;left:-2%;right:-2%;bottom:6px;height:14px;
+    background:rgba(211,154,58,.4);z-index:-1;border-radius:4px;transform:rotate(-1deg);
+  }
+  .sub{margin-top:18px;font-size:clamp(15px,2.4vw,19px);color:var(--soft);max-width:560px;margin-left:auto;margin-right:auto}
+
+  /* ===== 标签导航 ===== */
+  nav{
+    position:sticky;top:0;z-index:10;
+    background:rgba(244,236,224,.85);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+    display:flex;justify-content:center;gap:6px;flex-wrap:wrap;
+    padding:14px 16px;
+  }
+  .tab{
+    font-family:'Noto Sans SC',sans-serif;font-weight:700;font-size:15px;
+    border:none;background:transparent;color:var(--soft);cursor:pointer;
+    padding:9px 18px;border-radius:30px;transition:.25s;white-space:nowrap;
+  }
+  .tab:hover{color:var(--ink);background:rgba(0,0,0,.04)}
+  .tab.active{background:var(--ink);color:var(--paper)}
+
+  main{position:relative;z-index:2;max-width:880px;margin:0 auto;padding:40px 20px 100px}
+  .panel{display:none;animation:fade .5s ease}
+  .panel.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  .section-eyebrow{font-family:'Noto Serif SC',serif;color:var(--accent-2);font-weight:600;letter-spacing:3px;font-size:13px;text-transform:uppercase}
+  .section-title{font-family:'Noto Serif SC',serif;font-weight:900;font-size:clamp(26px,5vw,38px);margin:6px 0 8px}
+  .section-desc{color:var(--soft);font-size:16px;margin-bottom:30px;max-width:620px}
+
+  /* ===== 卡片 ===== */
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:28px;margin-bottom:22px;box-shadow:var(--shadow);
+  }
+  .card h3{font-family:'Noto Serif SC',serif;font-size:22px;margin-bottom:6px;display:flex;align-items:center;gap:12px}
+  .num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:34px;height:34px;border-radius:10px;background:var(--accent);color:#fff;
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;flex-shrink:0;
+  }
+  .card p{color:#5a4f44;margin-top:8px}
+  .analogy{
+    margin-top:14px;background:var(--paper-2);border-left:4px solid var(--gold);
+    border-radius:0 10px 10px 0;padding:12px 16px;font-size:15px;
+  }
+  .analogy b{color:var(--gold)}
+  .ic{font-family:'JetBrains Mono',monospace;background:#2b2420;color:#e6ddd0;padding:2px 7px;border-radius:5px;font-size:.92em}
+  .example-picker{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .ex-btn{font-family:'Noto Sans SC';font-weight:500;font-size:14px;cursor:pointer;background:var(--card);border:1px solid var(--line);color:var(--soft);padding:8px 15px;border-radius:30px;transition:.2s}
+  .ex-btn:hover{border-color:var(--soft);color:var(--ink)}
+  .ex-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+
+  /* ===== 代码翻译器 ===== */
+  .translator{display:grid;grid-template-columns:1fr;gap:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow)}
+  .code-side{background:var(--code-bg);padding:0}
+  .code-head{
+    display:flex;align-items:center;gap:8px;padding:12px 18px;
+    background:rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .dot{width:11px;height:11px;border-radius:50%}
+  .dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+  .code-file{margin-left:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#9a8f80}
+  .code-lines{padding:18px 0;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1}
+  .cline{
+    display:flex;gap:0;padding:7px 18px;cursor:pointer;transition:.18s;border-left:3px solid transparent;
+  }
+  .cline:hover{background:rgba(255,255,255,.05)}
+  .cline.active{background:rgba(224,83,58,.16);border-left-color:var(--accent)}
+  .lnum{color:#5a5048;width:26px;flex-shrink:0;user-select:none;text-align:right;margin-right:16px}
+  .ctext{color:#e6ddd0;white-space:pre}
+  .ctext .kw{color:#e0533a;font-weight:700}     /* 关键字 */
+  .ctext .fn{color:#d39a3a}                       /* 函数 */
+  .ctext .str{color:#7fbf8f}                      /* 字符串 */
+  .ctext .num2{color:#8fb8e0}                     /* 数字 */
+  .ctext .cmt{color:#6b6155;font-style:italic}    /* 注释 */
+  .explain-side{background:var(--code-paper);padding:22px;min-height:140px}
+  .explain-side .tip{font-size:13px;color:var(--soft);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+  .explain-box{font-size:16px;line-height:1.75}
+  .explain-box .label{display:inline-block;font-family:'JetBrains Mono',monospace;background:var(--ink);color:var(--paper);padding:2px 9px;border-radius:6px;font-size:13px;margin-bottom:10px}
+  .explain-box .human{color:var(--accent-2);font-weight:700;font-family:'Noto Serif SC',serif;font-size:18px;margin-top:6px}
+  @media(min-width:720px){
+    .translator{grid-template-columns:1fr 1fr}
+  }
+  .run-row{margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .run-btn{
+    font-family:'Noto Sans SC';font-weight:700;font-size:15px;cursor:pointer;
+    background:var(--accent-2);color:#fff;border:none;padding:11px 22px;border-radius:30px;
+    transition:.2s;box-shadow:0 4px 0 #2c5e46;
+  }
+  .run-btn:hover{transform:translateY(-1px)}
+  .run-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #2c5e46}
+  .output{
+    flex:1;min-width:160px;font-family:'JetBrains Mono',monospace;font-size:14px;
+    background:var(--code-bg);color:#7fbf8f;padding:11px 16px;border-radius:10px;min-height:42px;
+    display:flex;align-items:center;
+  }
+
+  /* ===== 词汇表 ===== */
+  .glossary{display:block}
+  .glossary-cat{font-family:'Noto Serif SC',serif;font-weight:600;font-size:19px;color:var(--accent-2);margin:28px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  .glossary-cat:first-child{margin-top:0}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+  .term{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;
+    transition:.25s;cursor:default;position:relative;overflow:hidden;
+  }
+  .term:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--accent)}
+  .term .en{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent);font-size:17px}
+  .term .cn{font-family:'Noto Serif SC',serif;font-weight:600;font-size:15px;color:var(--ink);margin:2px 0 8px}
+  .term .meaning{font-size:14px;color:#5a4f44}
+
+  /* ===== 测验 ===== */
+  .quiz-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px;box-shadow:var(--shadow)}
+  .progress-wrap{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+  .progress-bar{flex:1;height:8px;background:var(--paper-2);border-radius:10px;overflow:hidden}
+  .progress-fill{height:100%;width:0;background:var(--accent);border-radius:10px;transition:.4s}
+  .progress-text{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--soft)}
+  .q-text{font-family:'Noto Serif SC',serif;font-size:21px;font-weight:600;margin-bottom:6px}
+  .q-code{font-family:'JetBrains Mono',monospace;background:var(--code-bg);color:#e6ddd0;padding:14px 18px;border-radius:10px;margin:14px 0 20px;font-size:14px;white-space:pre-wrap}
+  .options{display:flex;flex-direction:column;gap:12px}
+  .opt{
+    text-align:left;font-family:'Noto Sans SC';font-size:16px;cursor:pointer;
+    background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:14px 18px;
+    transition:.18s;color:var(--ink);
+  }
+  .opt:hover:not(:disabled){border-color:var(--soft);transform:translateX(3px)}
+  .opt.correct{background:rgba(58,125,93,.15);border-color:var(--accent-2);color:var(--accent-2);font-weight:700}
+  .opt.wrong{background:rgba(224,83,58,.12);border-color:var(--accent);color:var(--accent)}
+  .opt:disabled{cursor:default}
+  .feedback{margin-top:18px;font-size:15px;padding:14px 16px;border-radius:10px;display:none}
+  .feedback.show{display:block}
+  .feedback.good{background:rgba(58,125,93,.12);color:var(--accent-2)}
+  .feedback.bad{background:rgba(224,83,58,.1);color:#a73a26}
+  .next-btn{
+    margin-top:18px;font-family:'Noto Sans SC';font-weight:700;font-size:15px;cursor:pointer;
+    background:var(--ink);color:var(--paper);border:none;padding:11px 26px;border-radius:30px;display:none;
+  }
+  .next-btn.show{display:inline-block}
+  .quiz-done{text-align:center;padding:20px}
+  .quiz-done .big{font-family:'Noto Serif SC',serif;font-size:48px;font-weight:900;color:var(--accent)}
+  .restart{margin-top:18px;font-family:'Noto Sans SC';font-weight:700;cursor:pointer;background:var(--accent);color:#fff;border:none;padding:11px 26px;border-radius:30px}
+
+  footer{text-align:center;padding:30px 20px 60px;color:var(--soft);font-size:14px;position:relative;z-index:2}
+  footer .heart{color:var(--accent)}
+
+  /* ===== 动手写练习 ===== */
+  .write-task{display:flex;flex-direction:column;gap:24px}
+  .wcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
+  .wcard .wgoal{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:600;display:flex;align-items:center;gap:10px}
+  .wcard .wgoal .num{flex-shrink:0}
+  .wcard .whint{background:var(--paper-2);border-left:4px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 14px;font-size:14px;color:#5a4f44;margin:12px 0 16px}
+  .wcard .whint b{color:var(--blue)}
+  .code-editor{
+    font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.7;
+    background:var(--code-bg);color:#e6ddd0;border:none;border-radius:12px;
+    padding:16px 18px;width:100%;resize:vertical;min-height:90px;
+    outline:2px solid transparent;transition:.2s;tab-size:4;
+  }
+  .code-editor:focus{outline-color:var(--accent-2)}
+  .wrun-row{margin-top:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .wrun-btn{font-family:'Noto Sans SC';font-weight:700;font-size:15px;cursor:pointer;background:var(--accent-2);color:#fff;border:none;padding:10px 22px;border-radius:30px;box-shadow:0 4px 0 #2c5e46;transition:.15s}
+  .wrun-btn:hover{transform:translateY(-1px)}
+  .wrun-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #2c5e46}
+  .wreset-btn{font-family:'Noto Sans SC';font-weight:500;font-size:14px;cursor:pointer;background:transparent;color:var(--soft);border:1px solid var(--line);padding:9px 16px;border-radius:30px}
+  .woutput{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:14px;background:#241e1a;border-radius:10px;padding:14px 16px;min-height:46px;white-space:pre-wrap;line-height:1.6}
+  .woutput .ok{color:#7fbf8f}
+  .woutput .err{color:#f0a08f}
+  .woutput .sys{color:#9a8f80}
+  .wsuccess{margin-top:12px;font-size:14px;color:var(--accent-2);font-weight:700;display:none}
+  .wsuccess.show{display:block}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="stamp">小白专属</span>
+  <h1>代码<span class="hl">翻译官</span></h1>
+  <p class="sub">把程序员写的"天书"翻译成人话,还能亲手敲几行试试。不用安装任何东西,从看懂到会写,点一点就开始。</p>
+</header>
+
+<nav>
+  <button class="tab active" data-tab="intro">① 代码是啥</button>
+  <button class="tab" data-tab="translate">② 逐行翻译</button>
+  <button class="tab" data-tab="glossary">③ 黑话词典</button>
+  <button class="tab" data-tab="write">④ 自己动手写</button>
+  <button class="tab" data-tab="quiz">⑤ 小测验</button>
+  <button class="tab" data-tab="sandbox">⑥ 自由练习场</button>
+</nav>
+
+<main>
+  <!-- ========== 面板1:代码是啥 ========== -->
+  <section class="panel show" id="intro">
+    <div class="section-eyebrow">第一站 · 建立感觉</div>
+    <h2 class="section-title">代码,其实就是"给电脑写的菜谱"</h2>
+    <p class="section-desc">电脑很笨,它什么都不会主动做。你得把每一步都写清楚,它才会照做。这份"步骤说明书"就是代码。看懂代码 = 看懂这份说明书的每一句话。</p>
+
+    <div class="card">
+      <h3><span class="num">1</span>代码 = 一条条命令</h3>
+      <p>程序员把任务拆成很多小步骤,每一行代码通常就是一个命令,告诉电脑"做这件事"。电脑从上往下,一行一行地执行,绝不会跳着读。</p>
+      <div class="analogy">🍜 <b>打个比方:</b>就像泡面说明——「①撕开包装 ②加调料 ③倒开水 ④等3分钟」。电脑就是那个严格按顺序、绝不偷懒也绝不动脑的厨师。你写错一步,它就照着错的做。</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">2</span>变量 = 贴了标签的盒子</h3>
+      <p>代码里经常出现 <code class="ic">name = "小明"</code> 这种东西。意思是:准备一个盒子,贴上"name"的标签,把"小明"放进去。以后说 name,就是指里面的"小明"。盒子里的东西随时能换成别的。</p>
+      <div class="analogy">📦 <b>打个比方:</b>就像你在冰箱上贴便利贴。"鸡蛋在第二层"——下次你不用翻冰箱,看标签就知道鸡蛋在哪。把鸡蛋吃完换成牛奶,标签内容也跟着变。</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">3</span>数据类型 = 盒子里装的"东西种类"</h3>
+      <p>盒子里能装不同种类的东西,代码主要分这几类:<b>数字</b>(18、3.5)能做算术;<b>文字</b>(要用引号包起来,像 <code class="ic">"你好"</code>)是一串字符;<b>真/假</b>(True / False)用来回答"是不是"。</p>
+      <div class="analogy">🏷️ <b>打个比方:</b><code class="ic">18</code> 是数字,能加减乘除;<code class="ic">"18"</code> 加了引号就变成文字了,电脑会把它当成两个字符,而不是十八。这个区别超级重要,新手最容易在这栽跟头。</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">4</span>函数 = 一个能重复用的"按钮"</h3>
+      <p>有些事要反复做,程序员就把它打包成一个"函数",起个名字。以后想做这件事,喊一声名字加个括号就行(像 <code class="ic">print()</code>),不用重写一遍。括号里塞的是"给它的材料"。</p>
+      <div class="analogy">☕ <b>打个比方:</b>就像咖啡机上的"美式"按钮。背后有一堆复杂步骤(磨豆、加水、加热),但你只要按一下,它全帮你做完。括号里放的糖和奶,就是你给它的"材料"。</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">5</span>判断(if)= 代码会"看情况办事"</h3>
+      <p>电脑能根据情况走不同的路。<code class="ic">if</code>(如果)后面跟一个条件,条件成立就做一件事,不成立就跳过或改做别的(<code class="ic">else</code>,否则)。这是代码"聪明"起来的地方。</p>
+      <div class="analogy">☔ <b>打个比方:</b>"<b>如果</b>下雨,就带伞;<b>否则</b>,穿短袖。"你每天出门都在做这种判断,代码也一样。条件就是那句"下雨了吗?"</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">6</span>循环(for / while)= 重复做,不喊累</h3>
+      <p>要做同一件事很多遍?不用复制粘贴一百行。<code class="ic">for</code> 和 <code class="ic">while</code> 让电脑自动重复,做几遍你说了算。这是电脑最擅长、人最讨厌的活。</p>
+      <div class="analogy">🏃 <b>打个比方:</b>体育老师说"绕操场跑5圈"。他不会喊5遍"跑一圈",而是说一句"跑5圈"。循环就是那句"重复N遍"的指令。</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">7</span>列表 = 一排格子的盒子</h3>
+      <p>普通盒子只能装一样东西,<b>列表</b>(用方括号 <code class="ic">[ ]</code> 表示)能一次装一排,像 <code class="ic">["苹果", "香蕉", "橘子"]</code>。要装一堆同类东西时就用它,比如一个班所有同学的名字。</p>
+      <div class="analogy">🥚 <b>打个比方:</b>就像鸡蛋托盘,一格一个,排得整整齐齐。你可以说"给我第1个""给我第3个",每个格子都有自己的编号(而且程序员从 0 开始数!)。</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">8</span>输入输出 = 电脑怎么跟你"对话"</h3>
+      <p><b>输出</b>(<code class="ic">print</code>)是电脑"说话"给你看;<b>输入</b>(<code class="ic">input</code>)是电脑"提问"等你回答。一个程序能跟人互动,靠的就是这一进一出。</p>
+      <div class="analogy">💬 <b>打个比方:</b>就像微信聊天。print 是对方发来的消息(显示给你看);input 是输入框,等你打字回复。程序就是这样一来一回跟你聊起来的。</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">9</span>看懂代码的"三板斧"</h3>
+      <p>遇到任何一段代码,先别慌。你只要从上往下,逐行问自己三个问题,就能懂个七八成:</p>
+      <div class="analogy" style="border-left-color:var(--accent)">🪓 <b>① 它在存什么?</b> 找等号 = ,看哪个盒子装了什么东西<br>🪓 <b>② 它在做什么?</b> 找带括号的词(如 print),那通常是一个动作<br>🪓 <b>③ 它在判断或重复什么?</b> 找 if(如果)、for(重复)这种词,看代码在什么情况下拐弯、重复几遍</div>
+      <p style="margin-top:14px;color:var(--accent-2);font-weight:600">练熟这三板斧,90% 的入门代码你都能读个明白。下一站就用它来实战!</p>
+    </div>
+  </section>
+
+  <!-- ========== 面板2:逐行翻译 ========== -->
+  <section class="panel" id="translate">
+    <div class="section-eyebrow">第二站 · 动手体验</div>
+    <h2 class="section-title">点一行代码,看它的"人话翻译"</h2>
+    <p class="section-desc">下面是几段真实的 Python 代码(最容易看懂的编程语言)。<b>先在上方选一个主题</b>,再<b>点击任意一行</b>,右边就会告诉你它在干什么。读完后还能点"运行",看看电脑会输出什么。建议每段都看一遍。</p>
+
+    <div class="example-picker" id="examplePicker"></div>
+
+    <div class="translator">
+      <div class="code-side">
+        <div class="code-head">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="code-file" id="codeFile">点单系统.py</span>
+        </div>
+        <div class="code-lines" id="codeLines"></div>
+      </div>
+      <div class="explain-side">
+        <div class="tip">👆 点左边任意一行代码</div>
+        <div class="explain-box" id="explainBox">
+          <div class="label">还没选</div>
+          <p>左边每一行代码,都是给电脑的一句话。点一下,我就把它翻译成大白话给你听。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="run-row">
+      <button class="run-btn" id="runBtn">▶ 运行这段代码</button>
+      <div class="output" id="output">点上面的按钮,看电脑怎么回应 →</div>
+    </div>
+  </section>
+
+  <!-- ========== 面板3:黑话词典 ========== -->
+  <section class="panel" id="glossary">
+    <div class="section-eyebrow">第三站 · 扫清障碍</div>
+    <h2 class="section-title">程序员的"黑话"小词典</h2>
+    <p class="section-desc">代码里那些反复出现的英文单词,意思其实都很固定。下面 30 多个词按用途分好了类,认识它们,你就能看懂绝大多数入门代码。不用背,看代码时遇到了回来查就行。</p>
+    <div class="glossary" id="glossary"></div>
+  </section>
+
+  <!-- ========== 面板4:自己动手写 ========== -->
+  <section class="panel" id="write">
+    <div class="section-eyebrow">第四站 · 从看懂到会写</div>
+    <h2 class="section-title">现在,轮到你来当程序员</h2>
+    <p class="section-desc">别怕!写代码不是从零开始。下面每个练习都给你"半成品",你只要照着提示填一点点,点运行,就能看到自己写的东西真的跑起来了。这是从"看懂"跨到"会写"最重要的一步。</p>
+
+    <div id="writeProgress" class="analogy" style="border-left-color:var(--accent-2);max-width:620px;margin-bottom:24px;font-weight:600">✅ 已完成 0 个练习</div>
+
+    <div class="write-task" id="writeTasks"></div>
+
+    <div class="card" style="margin-top:30px;border-style:dashed;border-color:var(--accent-2)">
+      <h3 style="font-size:20px">🎯 写代码的小心法</h3>
+      <p style="margin-top:10px"><b>1. 引号别漏。</b>文字内容一定要用 " " 包起来,比如 <code style="font-family:'JetBrains Mono';background:#2b2420;color:#e6ddd0;padding:1px 6px;border-radius:5px">"你好"</code>。漏了电脑会看不懂。</p>
+      <p style="margin-top:8px"><b>2. 缩进很重要。</b>if 下面那行要往右空几格(按一下 Tab 键),表示"这行属于它"。</p>
+      <p style="margin-top:8px"><b>3. 出错很正常。</b>哪怕是十年的老程序员,代码也经常一次跑不过。报错不是骂你,是电脑在提示哪里没对。改了再试就好。</p>
+    </div>
+  </section>
+
+  <!-- ========== 面板5:测验 ========== -->
+  <section class="panel" id="quiz">
+    <div class="section-eyebrow">第五站 · 检验成果</div>
+    <h2 class="section-title">来,试试你能不能看懂?</h2>
+    <p class="section-desc">放轻松,答错完全没关系——每道题答完都有讲解。这只是帮你确认"哦原来我懂了"。</p>
+    <div class="quiz-card" id="quizCard"></div>
+  </section>
+
+  <!-- ========== 面板6:自由练习场 ========== -->
+  <section class="panel" id="sandbox">
+    <div class="section-eyebrow">自由练习场 · 随便玩</div>
+    <h2 class="section-title">想到什么,就写什么</h2>
+    <p class="section-desc">这里没有题目,也没有对错。把前面学的 <b>print、变量、加减乘除、if/else、for 循环</b> 都拿来试。代码就是要多敲——敲错了改改再来,谁都是这么过来的。</p>
+
+    <div class="wcard">
+      <textarea class="code-editor" id="sandboxEditor" spellcheck="false" style="min-height:220px"></textarea>
+      <div class="wrun-row">
+        <button class="wrun-btn" id="sandboxRun">▶ 运行</button>
+        <button class="wreset-btn" id="sandboxClear">🗑 清空</button>
+        <button class="wreset-btn" id="sandboxDemo">↺ 放个例子</button>
+      </div>
+      <div class="woutput" id="sandboxOut"><span class="sys">点"运行"看结果 →</span></div>
+    </div>
+
+    <div class="card" style="border-style:dashed;border-color:var(--blue)">
+      <h3 style="font-size:19px">🧪 几个可以试的小点子</h3>
+      <p style="margin-top:10px">· 算一年有多少小时:<code class="ic">print(365 * 24)</code><br>
+      · 拼个句子:<code class="ic">print("我叫" + "你的名字")</code><br>
+      · 用 for 从 1 数到 10<br>
+      · 存一个分数,用 if / elif / else 判断 A / B / C 等级<br>
+      · 用循环把 1 到 100 全加起来,看得多少</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  用 <span class="heart">❤</span> 为每一个想看懂代码的小白而做 · 不懂就多点几遍,没人会笑你
+</footer>
+
+<script>
+/* ===== 标签切换 ===== */
+const tabs=document.querySelectorAll('.tab');
+const panels=document.querySelectorAll('.panel');
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  tabs.forEach(x=>x.classList.remove('active'));
+  panels.forEach(x=>x.classList.remove('show'));
+  t.classList.add('active');
+  document.getElementById(t.dataset.tab).classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}));
+
+/* ===== 逐行翻译数据:多个例子 ===== */
+const examples=[
+  {
+    name:'点单系统.py',
+    title:'☕ 奶茶点单',
+    output:['满30,送你一块小饼干!','一共 36 元'],
+    lines:[
+      {html:'<span class="cmt"># 这是一个简单的点单程序</span>',label:'# 注释',human:'这是给人看的笔记,电脑会忽略它',detail:'以 # 开头的一行是"注释"。程序员写给自己或同伴看的备注,电脑完全不理会它。所以你看不懂某行时,先看它是不是注释——是的话直接跳过。'},
+      {html:'<span class="fn">price</span> = <span class="num2">18</span>',label:'变量赋值',human:'准备一个盒子叫 price,放进数字 18',detail:'等号 = 不是"相等",而是"存进去"的意思。这行是说:有一杯饮料 price(价格)是 18 块。'},
+      {html:'<span class="fn">count</span> = <span class="num2">2</span>',label:'变量赋值',human:'再准备一个盒子叫 count,放进数字 2',detail:'count(数量)= 2,表示顾客点了 2 杯。现在电脑记住了:每杯 18,买 2 杯。'},
+      {html:'<span class="fn">total</span> = <span class="fn">price</span> * <span class="fn">count</span>',label:'计算',human:'算总价:18 乘以 2,把结果存进 total',detail:'星号 * 就是乘号(键盘上没有×,程序员用*代替)。这行把 price 和 count 相乘,18×2=36,存进 total(总计)这个盒子。'},
+      {html:'<span class="kw">if</span> <span class="fn">total</span> > <span class="num2">30</span>:',label:'条件判断',human:'如果总价超过 30 块……',detail:'if 就是"如果"。这行在问:total 是不是大于 30?如果是,就执行下面缩进的那行;如果不是,就跳过。结尾的冒号 : 表示"接下来缩进的内容归我管"。'},
+      {html:'    <span class="fn">print</span>(<span class="str">"满30,送你一块小饼干!"</span>)',label:'输出',human:'(满足条件时)在屏幕上显示这句话',detail:'print 就是"打印/显示"。注意它前面空了 4 格(缩进),表示它"属于"上面的 if——只有满30才会执行。'},
+      {html:'<span class="fn">print</span>(<span class="str">"一共"</span>, <span class="fn">total</span>, <span class="str">"元"</span>)',label:'输出',human:'显示:一共 36 元',detail:'这行没有缩进,所以不管满不满30都会执行。它把"一共"、total盒子里的36、"元"用逗号隔开,拼起来显示给顾客看。'}
+    ]
+  },
+  {
+    name:'成绩判断.py',
+    title:'📝 成绩等级',
+    output:['你的等级是: B','继续加油!'],
+    lines:[
+      {html:'<span class="fn">score</span> = <span class="num2">85</span>',label:'变量赋值',human:'把分数 85 存进盒子 score',detail:'先把这次考试的分数 85 记在 score(分数)这个盒子里,后面要拿它来做判断。'},
+      {html:'<span class="kw">if</span> <span class="fn">score</span> >= <span class="num2">90</span>:',label:'条件判断',human:'如果分数 ≥ 90……',detail:'>= 是"大于等于"。先问:score 到 90 了吗?85 没到,所以这条不成立,电脑会跳过它下面那行,去看 elif。'},
+      {html:'    <span class="fn">print</span>(<span class="str">"你的等级是: A"</span>)',label:'输出',human:'(满足时才会)显示等级 A',detail:'因为上面的条件没成立,这行被跳过,不会执行。'},
+      {html:'<span class="kw">elif</span> <span class="fn">score</span> >= <span class="num2">80</span>:',label:'否则如果',human:'否则,如果分数 ≥ 80……',detail:'elif 是 "else if" 的缩写,意思是"要是上面那条不成立,那再看看这条"。85 ≥ 80 成立!所以下面这行会执行。'},
+      {html:'    <span class="fn">print</span>(<span class="str">"你的等级是: B"</span>)',label:'输出',human:'显示:你的等级是 B',detail:'条件成立,这行执行,屏幕显示 B。一旦某条 if/elif 成立,后面的就都不再检查了。'},
+      {html:'<span class="kw">else</span>:',label:'否则',human:'否则(以上都不成立)……',detail:'else 是"否则"——前面所有条件都不成立时的兜底。这里因为 B 已经成立了,所以 else 不会执行。'},
+      {html:'    <span class="fn">print</span>(<span class="str">"你的等级是: C"</span>)',label:'输出',human:'(兜底时才会)显示等级 C',detail:'被跳过,不执行。'},
+      {html:'<span class="fn">print</span>(<span class="str">"继续加油!"</span>)',label:'输出',human:'显示:继续加油!',detail:'这行没缩进,不属于任何 if,所以无论等级是多少,最后都会显示这句鼓励。'}
+    ]
+  },
+  {
+    name:'循环报数.py',
+    title:'🔁 循环报数',
+    output:['第 1 个苹果','第 2 个苹果','第 3 个苹果','数完啦!'],
+    lines:[
+      {html:'<span class="cmt"># 用循环重复做事,不用复制粘贴</span>',label:'# 注释',human:'笔记:这段在演示循环',detail:'又是注释,电脑忽略。它在提醒我们:下面要用循环了。'},
+      {html:'<span class="kw">for</span> <span class="fn">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num2">1</span>, <span class="num2">4</span>):',label:'循环',human:'让 i 依次等于 1、2、3,各跑一遍',detail:'for ... in range(1, 4) 的意思是:"让 i 从 1 数到 3(不含4),每个数都把下面缩进的代码跑一遍"。所以下面会执行 3 次。range 在程序员这里是"含头不含尾"的。'},
+      {html:'    <span class="fn">print</span>(<span class="str">"第"</span>, <span class="fn">i</span>, <span class="str">"个苹果"</span>)',label:'输出',human:'每轮显示:第 X 个苹果',detail:'这行缩进了,属于上面的 for,所以会被重复 3 次。每次 i 不一样(1、2、3),所以打印出"第1个""第2个""第3个"。'},
+      {html:'<span class="fn">print</span>(<span class="str">"数完啦!"</span>)',label:'输出',human:'循环结束后,显示:数完啦!',detail:'这行没缩进,不在循环里,所以只在 3 轮全跑完之后,执行一次。'}
+    ]
+  },
+  {
+    name:'打招呼.py',
+    title:'💬 问名字',
+    output:['你好, 小红 ! 欢迎光临'],
+    lines:[
+      {html:'<span class="fn">name</span> = <span class="fn">input</span>(<span class="str">"请输入你的名字: "</span>)',label:'输入',human:'问用户名字,把回答存进 name',detail:'input 会在屏幕上显示提示"请输入你的名字:",然后停下来等用户打字。用户输入什么,就存进 name 盒子。(这里假设用户输入了"小红")'},
+      {html:'<span class="fn">greeting</span> = <span class="str">"你好, "</span> + <span class="fn">name</span> + <span class="str">" ! 欢迎光临"</span>',label:'文字拼接',human:'把三段文字拼成一句问候语',detail:'加号 + 用在文字上,是"拼接"的意思(不是加法)。把"你好, "、name里的"小红"、" ! 欢迎光临"接成一整句,存进 greeting。'},
+      {html:'<span class="fn">print</span>(<span class="fn">greeting</span>)',label:'输出',human:'显示拼好的问候语',detail:'把 greeting 盒子里拼好的整句话显示出来:你好, 小红 ! 欢迎光临。'}
+    ]
+  },
+  {
+    name:'函数复用.py',
+    title:'🔧 自定义函数',
+    output:['圆面积: 28.26','圆面积: 78.5'],
+    lines:[
+      {html:'<span class="kw">def</span> <span class="fn">area</span>(<span class="fn">r</span>):',label:'定义函数',human:'造一个叫 area 的"按钮",需要一个材料 r',detail:'def 是"定义函数"——也就是造一个能重复用的按钮。这个按钮叫 area(面积),括号里的 r 是它需要的材料(半径)。注意这只是"造",还没用。'},
+      {html:'    <span class="kw">return</span> <span class="num2">3.14</span> * <span class="fn">r</span> * <span class="fn">r</span>',label:'返回结果',human:'算出面积,把结果交回去',detail:'return 是"交出结果"。这行算 3.14 × r × r(圆面积公式),算完把答案交还给"按下按钮的人"。缩进表示它是 area 这个函数内部的步骤。'},
+      {html:'<span class="fn">print</span>(<span class="str">"圆面积:"</span>, <span class="fn">area</span>(<span class="num2">3</span>))',label:'调用函数',human:'按下按钮,材料给 3,显示结果',detail:'area(3) 就是"按下按钮,给它半径3"。它会算出 3.14×3×3=28.26 并交回来,然后被 print 显示出来。'},
+      {html:'<span class="fn">print</span>(<span class="str">"圆面积:"</span>, <span class="fn">area</span>(<span class="num2">5</span>))',label:'再次调用',human:'同一个按钮,这次材料给 5',detail:'同一个 area 按钮,换个材料 5 再按一次,得到 78.5。这就是函数的好处:写一次,反复用,换材料就行。'}
+    ]
+  }
+];
+
+const codeLines=document.getElementById('codeLines');
+const explainBox=document.getElementById('explainBox');
+const codeFile=document.getElementById('codeFile');
+const picker=document.getElementById('examplePicker');
+let curExample=0;
+
+function loadExample(idx){
+  curExample=idx;
+  const ex=examples[idx];
+  codeFile.textContent=ex.name;
+  codeLines.innerHTML='';
+  // 重置讲解框
+  explainBox.innerHTML='<div class="label">还没选</div><p>左边每一行代码,都是给电脑的一句话。点一下,我就把它翻译成大白话给你听。</p>';
+  ex.lines.forEach((d,i)=>{
+    const div=document.createElement('div');
+    div.className='cline';
+    div.tabIndex=0;
+    div.setAttribute('role','button');
+    div.innerHTML='<span class="lnum">'+(i+1)+'</span><span class="ctext">'+d.html+'</span>';
+    div.addEventListener('click',()=>{
+      document.querySelectorAll('#codeLines .cline').forEach(l=>l.classList.remove('active'));
+      div.classList.add('active');
+      explainBox.innerHTML='<div class="label">'+d.label+'</div><div class="human">「'+d.human+'」</div><p style="margin-top:10px;color:#5a4f44">'+d.detail+'</p>';
+    });
+    div.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();div.click();} });
+    codeLines.appendChild(div);
+  });
+  // 重置输出
+  document.getElementById('output').innerHTML='点上面的按钮,看电脑怎么回应 →';
+  document.getElementById('output').style.color='';
+  // 更新按钮高亮
+  document.querySelectorAll('.ex-btn').forEach((b,bi)=>b.classList.toggle('active',bi===idx));
+}
+
+// 渲染切换按钮
+examples.forEach((ex,i)=>{
+  const b=document.createElement('button');
+  b.className='ex-btn'+(i===0?' active':'');
+  b.textContent=ex.title;
+  b.addEventListener('click',()=>loadExample(i));
+  picker.appendChild(b);
+});
+loadExample(0);
+
+/* 运行模拟:逐行打印当前例子的输出 */
+document.getElementById('runBtn').addEventListener('click',()=>{
+  const out=document.getElementById('output');
+  const lines=examples[curExample].output;
+  out.style.color='#7fbf8f';
+  out.innerHTML='<span style="color:#9a8f80">> 电脑运行中...</span>';
+  let shown=[];
+  let i=0;
+  function step(){
+    if(i>=lines.length) return;
+    shown.push('> '+lines[i]);
+    out.innerHTML=shown.join('<br>');
+    i++;
+    if(i<lines.length) setTimeout(step,550);
+  }
+  setTimeout(()=>{shown=[];step();},450);
+});
+
+/* ===== 词典数据(分类) ===== */
+const glossaryGroups=[
+  {cat:'🗣️ 最常见的动作',terms:[
+    {en:'print',cn:'打印 / 显示',meaning:'让电脑把内容显示在屏幕上。最常见的命令,几乎每段代码都有它。'},
+    {en:'input',cn:'输入 / 提问',meaning:'电脑提个问题,停下来等你打字回答,把你输入的存起来。'},
+    {en:'len',cn:'长度 / 数量',meaning:'数一数有多少个,比如一段文字几个字、一个列表几项。'},
+    {en:'range',cn:'一段数字范围',meaning:'生成一串连续数字,常和 for 搭配。range(1,4) 是 1、2、3(含头不含尾)。'},
+    {en:'append',cn:'追加 / 添加',meaning:'往列表末尾再塞一个东西进去。'}
+  ]},
+  {cat:'🔀 判断与重复',terms:[
+    {en:'if',cn:'如果',meaning:'做判断。"如果……成立,就执行下面的事。"代码会拐弯的地方。'},
+    {en:'elif',cn:'否则如果',meaning:'"else if"的缩写。上一个条件不成立时,再试试这一个。'},
+    {en:'else',cn:'否则',meaning:'和 if 搭配。"如果都不成立,那就……改做别的。"兜底用。'},
+    {en:'for',cn:'循环(逐个)',meaning:'重复做某件事,比如"对每一个学生都……"。最常用的循环。'},
+    {en:'while',cn:'当……时一直做',meaning:'另一种重复,"只要条件还成立,就一直做下去"。'},
+    {en:'break',cn:'跳出循环',meaning:'提前结束循环,"够了,别再重复了,我们走"。'},
+    {en:'continue',cn:'跳过这一轮',meaning:'本轮剩下的不做了,直接进入下一轮循环。'},
+    {en:'and / or / not',cn:'并且 / 或者 / 非',meaning:'把多个条件连起来。"年龄>18 and 有票"表示两个都要满足。'}
+  ]},
+  {cat:'📦 盒子与数据',terms:[
+    {en:'=',cn:'存进去(赋值)',meaning:'不是"相等"!是把右边的东西,装进左边的盒子里。'},
+    {en:'==',cn:'是否相等',meaning:'两个等号才是真正在问"这俩一样吗?",用来做判断。'},
+    {en:'!=',cn:'是否不相等',meaning:'问"这俩不一样吧?",不一样就成立。'},
+    {en:'>= / <=',cn:'大于等于 / 小于等于',meaning:'比大小用的。>= 是"够不够这么多"。'},
+    {en:'True / False',cn:'真 / 假',meaning:'代码里的"是"和"否",判断的最终答案只有这两种。'},
+    {en:'None',cn:'空 / 什么都没有',meaning:'表示"这里目前是空的、没有值",不是 0 也不是空字符。'},
+    {en:'int / float',cn:'整数 / 小数',meaning:'数字的两种类型:int 是整数(3),float 是小数(3.5)。'},
+    {en:'str',cn:'字符串(文字)',meaning:'一串文字,要用引号包起来。"18"是文字,18 才是数字。'},
+    {en:'list',cn:'列表',meaning:'一排格子的盒子,用 [ ] 表示,能装一串东西。'},
+    {en:'dict',cn:'字典 / 映射',meaning:'像查字典:用"键"找"值",比如 用"name"查到"小明"。'}
+  ]},
+  {cat:'🔧 函数相关',terms:[
+    {en:'def',cn:'定义函数',meaning:'造一个能重复使用的"按钮",起个名字打包一段操作。'},
+    {en:'return',cn:'返回(交出结果)',meaning:'函数算完后,把答案"交还"给调用它的地方。'},
+    {en:'( )',cn:'括号 / 调用',meaning:'词后面跟括号,通常表示"执行这个动作",括号里是给它的材料。'},
+    {en:'参数 / argument',cn:'给函数的材料',meaning:'调用函数时塞进括号里的东西,函数拿它来干活。'},
+    {en:'import',cn:'引入工具箱',meaning:'借用别人写好的工具包,比如 import math 引入数学工具。'}
+  ]},
+  {cat:'✍️ 符号与格式',terms:[
+    {en:'+ - * /',cn:'加减乘除',meaning:'* 是乘号,/ 是除号(键盘没有 ×÷,就用它们代替)。'},
+    {en:'%',cn:'取余数',meaning:'求除法的余数,7 % 3 = 1。常用来判断奇偶。'},
+    {en:'# 或 //',cn:'注释',meaning:'给人看的笔记,电脑会忽略。看不懂?先确认它是不是注释。'},
+    {en:'" "  或  \' \'',cn:'引号 / 文字',meaning:'引号里包着的是一段"文字内容",而不是命令。单双引号都行。'},
+    {en:'缩进 (空格)',cn:'归属关系',meaning:'往右空几格,表示"这行属于上面那个 if / for / def"。Python 里特别重要。'},
+    {en:':',cn:'冒号',meaning:'出现在 if、for、def 行末,意思是"下面缩进的内容归我管"。'},
+    {en:'[ ]',cn:'方括号 / 取第几个',meaning:'定义列表,或者取出第几个,如 names[0] 是第1个(从0数)。'}
+  ]}
+];
+const gEl=document.getElementById('glossary');
+glossaryGroups.forEach(group=>{
+  const h=document.createElement('div');
+  h.className='glossary-cat';
+  h.textContent=group.cat;
+  gEl.appendChild(h);
+  const grid=document.createElement('div');
+  grid.className='glossary-grid';
+  group.terms.forEach(g=>{
+    const d=document.createElement('div');
+    d.className='term';
+    d.innerHTML='<div class="en">'+g.en+'</div><div class="cn">'+g.cn+'</div><div class="meaning">'+g.meaning+'</div>';
+    grid.appendChild(d);
+  });
+  gEl.appendChild(grid);
+});
+
+/* ===== 动手写:练习数据 ===== */
+const writeTasks=[
+  {
+    goal:'让电脑跟你打招呼',
+    hint:'用 <b>print()</b> 显示一句话。试着把引号里的"世界"改成你的名字,再点运行!',
+    starter:'print("你好,世界")',
+    check:(out)=>out.length>0 && out[0].includes('你好'),
+    win:'成功!你刚刚写出了人生第一行代码 —— 让电脑开口说话。'
+  },
+  {
+    goal:'用盒子(变量)存一个数,再显示出来',
+    hint:'第一行已经把 18 存进了 price。<b>请你补上第二行</b>,用 print(price) 把它显示出来。',
+    starter:'price = 18\n',
+    check:(out)=>out.some(l=>l.trim()==='18'),
+    win:'漂亮!你学会了"先存进盒子,再取出来用"——这是编程里最核心的动作。'
+  },
+  {
+    goal:'让电脑做一道算术题',
+    hint:'把两个数相加,存进 total,再显示。试试改成别的数字,或把 + 换成 * (乘)。',
+    starter:'a = 5\nb = 3\ntotal = a + b\nprint(total)',
+    check:(out)=>out.length>0,
+    win:'厉害!你让电脑当了一回计算器。改改数字和符号,看看结果怎么变。'
+  },
+  {
+    goal:'让电脑学会"思考"(判断)',
+    hint:'这是 if(如果)。当 score 大于等于 60,就显示"及格了"。<b>试着把 score 改小到 50</b>,再运行,看会发生什么。',
+    starter:'score = 75\nif score >= 60:\n    print("及格了")\nprint("查询结束")',
+    check:(out)=>out.length>0,
+    win:'太棒了!你写出了会"拐弯"的代码。把 score 改小再运行,你会发现"及格了"消失了——因为条件不成立,电脑就跳过了它。'
+  },
+  {
+    goal:'让电脑二选一(if...else)',
+    hint:'<b>else</b> 是"否则"。age ≥ 18 就说"成年了",否则说"还是未成年"。<b>把 age 改成 16</b> 再运行,看它走哪条路。',
+    starter:'age = 20\nif age >= 18:\n    print("成年了")\nelse:\n    print("还是未成年")',
+    check:(out)=>out.length>0,
+    win:'漂亮!这就是"分支":条件成立走一条路,否则走另一条。把 age 改来改去,两条路你都能试到。'
+  },
+  {
+    goal:'用循环重复做事(for)',
+    hint:'<b>for</b> 让电脑自动重复。下面会数 1 到 3。<b>把 range(1, 4) 改成 range(1, 7)</b>,看它数到几?',
+    starter:'for i in range(1, 4):\n    print("第", i, "次")\nprint("数完啦")',
+    check:(out)=>out.length>=3,
+    win:'你写出了循环!重复的活,电脑一句话就全干完。改大 range 的第二个数字,它就跑更多遍——这正是电脑最擅长的事。'
+  },
+  {
+    goal:'循环 + 累加:从 1 加到 5',
+    hint:'用一个盒子 total 当"存钱罐",每转一圈就把 i 加进去。运行看 1+2+3+4+5 等于几;再改成加到 10 试试。',
+    starter:'total = 0\nfor i in range(1, 6):\n    total = total + i\nprint("一共是", total)',
+    check:(out)=>out.some(l=>String(l).includes('15')),
+    win:'强!你把"循环"和"变量"组合起来了——这是真正的编程思维。1 到 5 相加是 15,改成 range(1, 11) 看看是不是 55。'
+  }
+];
+
+/* ===== 迷你 Python 解释器 =====
+   支持:变量、数字/字符串、加减乘除、文字拼接、len()、print、
+        if / elif / else、for ... in range(...) 循环、and/or/not、注释 */
+function runMiniPython(code){
+  const out=[];
+  const vars={};
+
+  // 去掉行内注释(# 之后),但要避开字符串里的 #
+  function stripComment(line){
+    let q=null,res='';
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(q){res+=ch;if(ch===q)q=null;continue;}
+      if(ch==='"'||ch==="'"){q=ch;res+=ch;continue;}
+      if(ch==='#')break;
+      res+=ch;
+    }
+    return res;
+  }
+
+  // 预处理:拆成 {indent, text},跳过空行/纯注释
+  const prog=[];
+  code.replace(/\r/g,'').split('\n').forEach(raw=>{
+    const noc=stripComment(raw);
+    if(noc.trim()==='')return;
+    prog.push({indent:noc.length-noc.trimStart().length, text:noc.trim()});
+  });
+
+  let steps=0;
+  function guard(){ if(++steps>200000) throw '循环跑得太多次啦(超过 20 万步),是不是范围太大,或写出了停不下来的循环?'; }
+
+  // 求值:把一个表达式算成值(数字或字符串)
+  function evalExpr(expr){
+    expr=expr.trim();
+    if(expr==='') return '';
+    // 字符串:开头结尾是引号,且中间没有"提前闭合"(确保是单一完整字符串)
+    if((expr.startsWith('"')&&expr.endsWith('"'))||(expr.startsWith("'")&&expr.endsWith("'"))){
+      const q=expr[0];
+      let closedEarly=false;
+      for(let k=1;k<expr.length-1;k++){ if(expr[k]===q){closedEarly=true;break;} }
+      if(!closedEarly) return expr.slice(1,-1);
+    }
+    // 纯数字
+    if(/^-?\d+(\.\d+)?$/.test(expr)) return parseFloat(expr);
+    // 变量
+    if(/^[A-Za-z_]\w*$/.test(expr)){
+      if(expr in vars) return vars[expr];
+      throw '没有找到叫 '+expr+' 的盒子(变量)。是不是还没给它存东西,或者拼错了?';
+    }
+    // 四则运算:只处理 a op b 这种简单形式
+    const m=expr.match(/^(.+?)\s*([\+\-\*\/])\s*(.+)$/);
+    if(m){
+      const left=evalExpr(m[1]);
+      const right=evalExpr(m[3]);
+      if(typeof left==='number'&&typeof right==='number'){
+        if(m[2]==='+')return left+right;
+        if(m[2]==='-')return left-right;
+        if(m[2]==='*')return left*right;
+        if(m[2]==='/')return right===0?'∞(不能除以0)':left/right;
+      }
+      if(m[2]==='+') return String(left)+String(right); // 文字拼接
+      throw '这一步算不出来:'+expr;
+    }
+    // len(...) 数一数有多少个字
+    let lm=expr.match(/^len\s*\((.*)\)$/);
+    if(lm){ return String(evalExpr(lm[1])).length; }
+    throw '看不懂这个内容:'+expr;
+  }
+
+  // 在最外层(不在括号/引号内)按某个关键词切开
+  function splitTop(c,kw){
+    const parts=[];let depth=0,q=null,last=0;
+    for(let i=0;i<c.length;i++){
+      const ch=c[i];
+      if(q){if(ch===q)q=null;continue;}
+      if(ch==='"'||ch==="'"){q=ch;continue;}
+      if(ch==='(')depth++;else if(ch===')')depth--;
+      if(depth===0 && c.substr(i,kw.length)===kw){parts.push(c.slice(last,i));i+=kw.length-1;last=i+1;}
+    }
+    parts.push(c.slice(last));
+    return parts;
+  }
+
+  // 求值条件,返回 true/false(支持 and / or / not)
+  function evalCond(cond){
+    cond=cond.trim();
+    let ors=splitTop(cond,' or ');
+    if(ors.length>1) return ors.some(p=>evalCond(p));
+    let ands=splitTop(cond,' and ');
+    if(ands.length>1) return ands.every(p=>evalCond(p));
+    if(cond.startsWith('not ')) return !evalCond(cond.slice(4));
+    const m=cond.match(/^(.+?)\s*(>=|<=|==|!=|>|<)\s*(.+)$/);
+    if(!m) throw 'if 后面需要一个判断,比如 score >= 60';
+    const l=evalExpr(m[1]), r=evalExpr(m[3]);
+    switch(m[2]){
+      case '>=':return l>=r; case '<=':return l<=r;
+      case '>':return l>r;  case '<':return l<r;
+      case '==':return l==r; case '!=':return l!=r;
+    }
+  }
+
+  // 找出一个代码块的结束位置(后面所有缩进更深的行)
+  function blockEnd(i,headerIndent){
+    let j=i+1;
+    while(j<prog.length && prog[j].indent>headerIndent) j++;
+    return j;
+  }
+
+  // 执行 [start, end) 区间的代码(按缩进识别嵌套)
+  function execBlock(start,end){
+    let i=start;
+    while(i<end){
+      const ln=prog[i];let m;
+      // if / elif / else 链
+      if(m=ln.text.match(/^if\s+(.+):$/)){
+        let done=false;
+        const bEnd=blockEnd(i,ln.indent);
+        if(evalCond(m[1])){ execBlock(i+1,bEnd); done=true; }
+        i=bEnd;
+        while(i<end && prog[i].indent===ln.indent && (/^elif\s+.+:$/.test(prog[i].text)||prog[i].text==='else:')){
+          const cl=prog[i],cEnd=blockEnd(i,cl.indent);let em;
+          if(em=cl.text.match(/^elif\s+(.+):$/)){ if(!done&&evalCond(em[1])){execBlock(i+1,cEnd);done=true;} }
+          else { if(!done){execBlock(i+1,cEnd);done=true;} }
+          i=cEnd;
+        }
+        continue;
+      }
+      // for ... in range(...)
+      if(m=ln.text.match(/^for\s+([A-Za-z_]\w*)\s+in\s+range\s*\((.+)\)\s*:$/)){
+        const vn=m[1];
+        const args=splitArgs(m[2]).map(a=>evalExpr(a));
+        let a=0,b=0,st=1;
+        if(args.length===1){b=args[0];}
+        else if(args.length===2){a=args[0];b=args[1];}
+        else {a=args[0];b=args[1];st=args[2];}
+        if(typeof a!=='number'||typeof b!=='number'||typeof st!=='number') throw 'range() 的括号里要放数字哦';
+        if(st===0) throw 'range 的步长不能是 0';
+        const bEnd=blockEnd(i,ln.indent);
+        for(let v=a; st>0? v<b : v>b; v+=st){ vars[vn]=v; guard(); execBlock(i+1,bEnd); }
+        i=bEnd;continue;
+      }
+      execSimple(ln.text);
+      i++;
+    }
+  }
+
+  function execSimple(line){
+    // print(...)
+    let pm=line.match(/^print\s*\((.*)\)$/);
+    if(pm){
+      const parts=splitArgs(pm[1]).map(a=>{
+        const v=evalExpr(a);
+        return typeof v==='number'? (Number.isInteger(v)?v:parseFloat(v.toFixed(4))) : v;
+      });
+      out.push(parts.join(' '));
+      return;
+    }
+    // 赋值 name = value  (但不是 ==)
+    let am=line.match(/^([A-Za-z_]\w*)\s*=\s*([^=].*)$/);
+    if(am){ vars[am[1]]=evalExpr(am[2]); return; }
+    throw '这一行看不懂:'+line+'  (检查一下拼写、引号或括号?)';
+  }
+
+  // 按逗号分割参数(避开引号和括号内的逗号)
+  function splitArgs(s){
+    const res=[];let cur='',q=null,depth=0;
+    for(const ch of s){
+      if(q){cur+=ch;if(ch===q)q=null;continue;}
+      if(ch==='"'||ch==="'"){q=ch;cur+=ch;continue;}
+      if(ch==='(')depth++;
+      if(ch===')')depth--;
+      if(ch===','&&depth===0){res.push(cur);cur='';continue;}
+      cur+=ch;
+    }
+    if(cur.trim()!=='')res.push(cur);
+    return res;
+  }
+
+  execBlock(0,prog.length);
+  return out;
+}
+
+/* ===== 渲染动手写练习 ===== */
+const wWrap=document.getElementById('writeTasks');
+writeTasks.forEach((t,idx)=>{
+  const card=document.createElement('div');
+  card.className='wcard';
+  card.innerHTML=
+    '<div class="wgoal"><span class="num">'+(idx+1)+'</span>'+t.goal+'</div>'+
+    '<div class="whint">💡 <b>提示:</b>'+t.hint+'</div>'+
+    '<textarea class="code-editor" spellcheck="false">'+t.starter+'</textarea>'+
+    '<div class="wrun-row"><button class="wrun-btn">▶ 运行我写的代码</button><button class="wreset-btn">↺ 还原</button></div>'+
+    '<div class="woutput"><span class="sys">写完上面的代码,点"运行"看结果 →</span></div>'+
+    '<div class="wsuccess">🎉 '+t.win+'</div>';
+  const editor=card.querySelector('.code-editor');
+  const runBtn=card.querySelector('.wrun-btn');
+  const resetBtn=card.querySelector('.wreset-btn');
+  const outEl=card.querySelector('.woutput');
+  const winEl=card.querySelector('.wsuccess');
+
+  // Tab 键插入缩进而不是跳走
+  editor.addEventListener('keydown',(e)=>{
+    if(e.key==='Tab'){e.preventDefault();
+      const s=editor.selectionStart,en=editor.selectionEnd;
+      editor.value=editor.value.slice(0,s)+'    '+editor.value.slice(en);
+      editor.selectionStart=editor.selectionEnd=s+4;
+    }
+  });
+
+  runBtn.addEventListener('click',()=>{
+    winEl.classList.remove('show');
+    try{
+      const out=runMiniPython(editor.value);
+      if(out.length===0){
+        outEl.innerHTML='<span class="sys">(代码跑通了,但没有任何 print,所以屏幕上看不到东西。试着加一行 print(...) 把结果显示出来?)</span>';
+      }else{
+        outEl.innerHTML=out.map(l=>'<span class="ok">> '+escapeHtml(String(l))+'</span>').join('\n');
+      }
+      if(t.check(out.map(x=>String(x)))){
+        winEl.classList.add('show');
+        markWriteDone(idx);
+      }
+    }catch(err){
+      outEl.innerHTML='<span class="err">⚠ 电脑没看懂这里:'+escapeHtml(String(err))+'</span>\n<span class="sys">(别慌,改一下再试。报错是正常的!)</span>';
+    }
+  });
+
+  resetBtn.addEventListener('click',()=>{
+    editor.value=t.starter;
+    outEl.innerHTML='<span class="sys">已还原。写完点"运行"看结果 →</span>';
+    winEl.classList.remove('show');
+  });
+
+  wWrap.appendChild(card);
+});
+
+/* ===== 进度记忆(存在浏览器里,下次打开还记得) ===== */
+function getWriteDone(){ try{return JSON.parse(localStorage.getItem('zxbc_write_done')||'[]');}catch(e){return [];} }
+function renderWriteProgress(){
+  const el=document.getElementById('writeProgress');
+  if(!el)return;
+  const n=getWriteDone().filter(i=>i<writeTasks.length).length;
+  el.textContent='✅ 已完成 '+n+' / '+writeTasks.length+' 个练习'+(n>=writeTasks.length?' —— 全部通关,你已经会写代码了!🎉':'');
+}
+function markWriteDone(i){
+  const d=getWriteDone();
+  if(!d.includes(i)){ d.push(i); localStorage.setItem('zxbc_write_done',JSON.stringify(d)); }
+  const card=wWrap.children[i];
+  if(card){
+    const g=card.querySelector('.wgoal');
+    if(g&&!g.querySelector('.donetag')){
+      const s=document.createElement('span');
+      s.className='donetag';
+      s.textContent=' ✓ 已完成';
+      s.style.cssText='color:var(--accent-2);font-size:13px;font-family:\'Noto Sans SC\';margin-left:6px';
+      g.appendChild(s);
+    }
+  }
+  renderWriteProgress();
+}
+getWriteDone().forEach(i=>{ if(i<writeTasks.length) markWriteDone(i); });
+renderWriteProgress();
+
+/* ===== 自由练习场 ===== */
+(function(){
+  const ed=document.getElementById('sandboxEditor');
+  const outEl=document.getElementById('sandboxOut');
+  if(!ed)return;
+  const demo='# 试试改改下面这几行,或者全删了自己写\nname = "小明"\nprint("你好,", name)\n\ntotal = 0\nfor i in range(1, 6):\n    total = total + i\nprint("1 加到 5 等于", total)';
+  ed.value=localStorage.getItem('zxbc_sandbox')||demo;
+  ed.addEventListener('keydown',(e)=>{
+    if(e.key==='Tab'){e.preventDefault();
+      const s=ed.selectionStart,en=ed.selectionEnd;
+      ed.value=ed.value.slice(0,s)+'    '+ed.value.slice(en);
+      ed.selectionStart=ed.selectionEnd=s+4;
+    }
+  });
+  ed.addEventListener('input',()=>localStorage.setItem('zxbc_sandbox',ed.value));
+  document.getElementById('sandboxRun').addEventListener('click',()=>{
+    try{
+      const r=runMiniPython(ed.value);
+      outEl.innerHTML=r.length?r.map(l=>'<span class="ok">> '+escapeHtml(String(l))+'</span>').join('\n')
+        :'<span class="sys">(代码跑通了,但没有 print,所以屏幕上看不到东西。加一行 print(...) 试试?)</span>';
+    }catch(err){
+      outEl.innerHTML='<span class="err">⚠ 电脑没看懂:'+escapeHtml(String(err))+'</span>\n<span class="sys">(改改再试,报错很正常!)</span>';
+    }
+  });
+  document.getElementById('sandboxClear').addEventListener('click',()=>{
+    ed.value=''; localStorage.setItem('zxbc_sandbox','');
+    outEl.innerHTML='<span class="sys">已清空,开始写吧 →</span>'; ed.focus();
+  });
+  document.getElementById('sandboxDemo').addEventListener('click',()=>{
+    ed.value=demo; localStorage.setItem('zxbc_sandbox',demo);
+    outEl.innerHTML='<span class="sys">已放上一个例子,点"运行"看看 →</span>';
+  });
+})();
+
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ===== 测验数据 ===== */
+const quizData=[
+  {q:'看到这行代码,它在干什么?',code:'age = 20',
+   opts:['判断 age 是不是 20','准备一个盒子叫 age,把 20 存进去','在屏幕上显示 20','把 age 删除'],
+   answer:1,
+   exp:'对啦!单个等号 = 是"存进去",意思是创建一个叫 age 的变量,里面装 20。注意它不是在"判断相等"哦。'},
+  {q:'这行 print 在做什么?',code:'print("你好")',
+   opts:['计算"你好"','把"你好"存起来','在屏幕上显示"你好"','删除"你好"'],
+   answer:2,
+   exp:'没错!print 就是"显示/打印",让电脑把括号里引号中的内容显示在屏幕上。'},
+  {q:'下面这段代码,什么时候才会显示"及格了"?',code:'if score >= 60:\n    print("及格了")',
+   opts:['任何时候都会显示','当 score 大于等于 60 时','当 score 等于 0 时','永远不会显示'],
+   answer:1,
+   exp:'答对了!if 是"如果",>= 是"大于等于"。只有当 score 这个分数 ≥ 60 时,缩进的那行 print 才会执行。'},
+  {q:'这行里的 # 后面那句话,电脑会怎么处理?',code:'x = 5  # 设置初始值',
+   opts:['会把它显示出来','会报错','会忽略它,当它不存在','会把 x 改成"设置初始值"'],
+   answer:2,
+   exp:'对!# 后面是"注释",纯粹给人看的笔记。电脑会完全忽略它,只执行前面的 x = 5。'},
+  {q:'total = 10 * 3 执行完,盒子 total 里装的是?',code:'total = 10 * 3',
+   opts:['"10 * 3"这串文字','13','30','报错'],
+   answer:2,
+   exp:'太棒了!* 是乘号,10 乘 3 等于 30,所以 total 里装的是数字 30。你已经掌握看代码的诀窍了!'}
+];
+
+let qIndex=0,qScore=0;
+const quizCard=document.getElementById('quizCard');
+function renderQuiz(){
+  if(qIndex>=quizData.length){
+    let best=+(localStorage.getItem('zxbc_quiz_best')||0);
+    if(qScore>best){ best=qScore; localStorage.setItem('zxbc_quiz_best',best); }
+    quizCard.innerHTML='<div class="quiz-done"><div class="big">'+qScore+'/'+quizData.length+'</div><h3 style="font-family:\'Noto Serif SC\';margin:10px 0">'+
+      (qScore>=4?'厉害!你已经能看懂基础代码了 🎉':qScore>=2?'不错的开始!回去再看看前面几站 💪':'没关系,代码就是要多看几遍 🌱')+
+      '</h3><p style="color:#8a7d6e">你现在已经知道:变量是盒子、print是显示、if是判断、#是注释,而且你还<b>亲手写出并运行了自己的代码</b>。从"看不懂天书"到"能读会写",这一步你已经迈出去了。</p>'+
+      '<p style="color:#8a7d6e;margin-top:6px">🏆 历史最好成绩:'+best+' / '+quizData.length+'</p>'+
+      '<button class="restart" onclick="restartQuiz()">再做一遍</button></div>';
+    return;
+  }
+  const d=quizData[qIndex];
+  let optsHtml='';
+  d.opts.forEach((o,i)=>{optsHtml+='<button class="opt" data-i="'+i+'">'+o+'</button>';});
+  quizCard.innerHTML=
+    '<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:'+(qIndex/quizData.length*100)+'%"></div></div><span class="progress-text">'+(qIndex+1)+' / '+quizData.length+'</span></div>'+
+    '<div class="q-text">'+d.q+'</div>'+
+    '<div class="q-code">'+d.code+'</div>'+
+    '<div class="options">'+optsHtml+'</div>'+
+    '<div class="feedback" id="fb"></div>'+
+    '<button class="next-btn" id="nextBtn">下一题 →</button>';
+  const opts=quizCard.querySelectorAll('.opt');
+  opts.forEach(o=>o.addEventListener('click',()=>{
+    const chosen=+o.dataset.i;
+    opts.forEach(x=>x.disabled=true);
+    const fb=document.getElementById('fb');
+    if(chosen===d.answer){
+      o.classList.add('correct');qScore++;
+      fb.className='feedback show good';fb.innerHTML='✅ 答对了!'+d.exp;
+    }else{
+      o.classList.add('wrong');
+      opts[d.answer].classList.add('correct');
+      fb.className='feedback show bad';fb.innerHTML='💡 正确答案是绿色那个。'+d.exp;
+    }
+    document.getElementById('nextBtn').classList.add('show');
+  }));
+  document.getElementById('nextBtn').addEventListener('click',()=>{qIndex++;renderQuiz();});
+}
+function restartQuiz(){qIndex=0;qScore=0;renderQuiz();}
+renderQuiz();
+</script>
+</body>
+</html>
