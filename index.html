@@ -229,6 +229,9 @@
   .woutput .sys{color:#9a8f80}
   .wsuccess{margin-top:12px;font-size:14px;color:var(--accent-2);font-weight:700;display:none}
   .wsuccess.show{display:block}
+  .wvarbox{margin-top:10px;font-size:13px;color:var(--soft);display:none;line-height:2.2}
+  .vchip{display:inline-block;background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:2px 10px;margin-left:6px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink)}
+  .vchip b{color:var(--accent);font-weight:700}
 </style>
 </head>
 <body>
@@ -390,15 +393,19 @@
         <button class="wreset-btn" id="sandboxDemo">↺ 放个例子</button>
       </div>
       <div class="woutput" id="sandboxOut"><span class="sys">点"运行"看结果 →</span></div>
+      <div class="wvarbox" id="sandboxVars"></div>
     </div>
 
     <div class="card" style="border-style:dashed;border-color:var(--blue)">
       <h3 style="font-size:19px">🧪 几个可以试的小点子</h3>
       <p style="margin-top:10px">· 算一年有多少小时:<code class="ic">print(365 * 24)</code><br>
-      · 拼个句子:<code class="ic">print("我叫" + "你的名字")</code><br>
-      · 用 for 从 1 数到 10<br>
+      · 拼个句子:<code class="ic">print("我叫" + "你的名字")</code>,或让字笑起来:<code class="ic">print("哈" * 10)</code><br>
+      · 用 for 从 1 数到 10;用 while 从 10 倒数到 1<br>
       · 存一个分数,用 if / elif / else 判断 A / B / C 等级<br>
-      · 用循环把 1 到 100 全加起来,看得多少</p>
+      · 用循环把 1 到 100 全加起来,看是不是 5050(高斯小时候的名题)<br>
+      · 做一张购物清单列表,.append 加东西、len() 数数量、[0] 取第一样<br>
+      · 用 <code class="ic">input("你叫什么名字?")</code> 问自己问题(会弹出输入框),再 print 出来<br>
+      · 变量名可以用中文!试试 <code class="ic">价格 = 18</code> 然后 <code class="ic">print(价格 * 2)</code></p>
     </div>
   </section>
 </main>
@@ -480,6 +487,30 @@ const examples=[
       {html:'    <span class="kw">return</span> <span class="num2">3.14</span> * <span class="fn">r</span> * <span class="fn">r</span>',label:'返回结果',human:'算出面积,把结果交回去',detail:'return 是"交出结果"。这行算 3.14 × r × r(圆面积公式),算完把答案交还给"按下按钮的人"。缩进表示它是 area 这个函数内部的步骤。'},
       {html:'<span class="fn">print</span>(<span class="str">"圆面积:"</span>, <span class="fn">area</span>(<span class="num2">3</span>))',label:'调用函数',human:'按下按钮,材料给 3,显示结果',detail:'area(3) 就是"按下按钮,给它半径3"。它会算出 3.14×3×3=28.26 并交回来,然后被 print 显示出来。'},
       {html:'<span class="fn">print</span>(<span class="str">"圆面积:"</span>, <span class="fn">area</span>(<span class="num2">5</span>))',label:'再次调用',human:'同一个按钮,这次材料给 5',detail:'同一个 area 按钮,换个材料 5 再按一次,得到 78.5。这就是函数的好处:写一次,反复用,换材料就行。'}
+    ]
+  },
+  {
+    name:'购物清单.py',
+    title:'🛒 列表清单',
+    output:['一共 3 样水果',"第1样是 苹果","['苹果', '香蕉', '橘子', '葡萄']"],
+    lines:[
+      {html:'<span class="fn">fruits</span> = [<span class="str">"苹果"</span>, <span class="str">"香蕉"</span>, <span class="str">"橘子"</span>]',label:'创建列表',human:'准备一排格子,装进三样水果',detail:'方括号 [ ] 就是列表——一排格子的盒子。这行把"苹果、香蕉、橘子"三样东西按顺序放进 fruits(水果)这个列表里。'},
+      {html:'<span class="fn">print</span>(<span class="str">"一共"</span>, <span class="fn">len</span>(<span class="fn">fruits</span>), <span class="str">"样水果"</span>)',label:'数数量',human:'用 len 数一数列表里有几样',detail:'len 是"长度/数量"。len(fruits) 数出列表里有 3 样东西,所以显示"一共 3 样水果"。'},
+      {html:'<span class="fn">fruits</span>.<span class="fn">append</span>(<span class="str">"葡萄"</span>)',label:'追加',human:'往清单末尾再加一样:葡萄',detail:'.append 是"追加"——往列表末尾再塞一个。现在 fruits 变成了 4 样。点号 . 的意思是"对它做这个动作"。'},
+      {html:'<span class="fn">print</span>(<span class="str">"第1样是"</span>, <span class="fn">fruits</span>[<span class="num2">0</span>])',label:'取第几个',human:'取出第 1 样(序号是 0!)',detail:'fruits[0] 是"取出第 0 格的东西"。注意:程序员从 0 开始数!所以 [0] 是第 1 样"苹果",[1] 才是"香蕉"。这是新手最容易懵的地方。'},
+      {html:'<span class="fn">print</span>(<span class="fn">fruits</span>)',label:'输出整个列表',human:'把整张清单显示出来',detail:'直接 print 一个列表,电脑会把整排格子原样显示出来,包括方括号和引号——所以你看到 [\'苹果\', \'香蕉\', \'橘子\', \'葡萄\']。'}
+    ]
+  },
+  {
+    name:'倒计时.py',
+    title:'⏳ while 倒计时',
+    output:['3','2','1','发射!'],
+    lines:[
+      {html:'<span class="fn">n</span> = <span class="num2">3</span>',label:'变量赋值',human:'准备一个盒子 n,放进 3',detail:'倒计时从 3 开始,所以先把 3 存进盒子 n。'},
+      {html:'<span class="kw">while</span> <span class="fn">n</span> > <span class="num2">0</span>:',label:'while 循环',human:'只要 n 还大于 0,就一直重复',detail:'while 是另一种循环:"只要条件还成立,就一直做"。和 for 不同,它不知道要跑几遍,全看条件什么时候不成立。这里只要 n > 0 就继续。'},
+      {html:'    <span class="fn">print</span>(<span class="fn">n</span>)',label:'输出',human:'把当前的 n 显示出来',detail:'缩进了,属于 while。每一轮把 n 现在的值打出来:第一轮 3,第二轮 2,第三轮 1。'},
+      {html:'    <span class="fn">n</span> = <span class="fn">n</span> - <span class="num2">1</span>',label:'更新变量',human:'把 n 减 1,再存回去',detail:'关键一步!每轮把 n 减小 1。如果忘了写这行,n 永远是 3,条件永远成立,循环就停不下来了(这叫"死循环",新手名场面)。'},
+      {html:'<span class="fn">print</span>(<span class="str">"发射!"</span>)',label:'输出',human:'循环结束后,显示:发射!',detail:'没缩进,不在循环里。等 n 减到 0、条件不成立、循环退出后,才执行这一句。'}
     ]
   }
 ];
@@ -587,6 +618,7 @@ const glossaryGroups=[
   {cat:'✍️ 符号与格式',terms:[
     {en:'+ - * /',cn:'加减乘除',meaning:'* 是乘号,/ 是除号(键盘没有 ×÷,就用它们代替)。'},
     {en:'%',cn:'取余数',meaning:'求除法的余数,7 % 3 = 1。常用来判断奇偶。'},
+    {en:'+=',cn:'加完再存回',meaning:'count += 1 等于 count = count + 1:把盒子里的数加一点,再放回去。'},
     {en:'# 或 //',cn:'注释',meaning:'给人看的笔记,电脑会忽略。看不懂?先确认它是不是注释。'},
     {en:'" "  或  \' \'',cn:'引号 / 文字',meaning:'引号里包着的是一段"文字内容",而不是命令。单双引号都行。'},
     {en:'缩进 (空格)',cn:'归属关系',meaning:'往右空几格,表示"这行属于上面那个 if / for / def"。Python 里特别重要。'},
@@ -661,15 +693,45 @@ const writeTasks=[
     starter:'total = 0\nfor i in range(1, 6):\n    total = total + i\nprint("一共是", total)',
     check:(out)=>out.some(l=>String(l).includes('15')),
     win:'强!你把"循环"和"变量"组合起来了——这是真正的编程思维。1 到 5 相加是 15,改成 range(1, 11) 看看是不是 55。'
+  },
+  {
+    goal:'判断一个数是单数还是双数(%)',
+    hint:'<b>%</b> 是"取余数":双数除以 2 余 0,单数余 1。所以 <code style="font-family:\'JetBrains Mono\';background:#2b2420;color:#e6ddd0;padding:1px 6px;border-radius:5px">n % 2 == 0</code> 就是在问"n 是双数吗?"。把 n 换几个数试试。',
+    starter:'n = 7\nif n % 2 == 0:\n    print(n, "是双数")\nelse:\n    print(n, "是单数")',
+    check:(out)=>out.some(l=>String(l).includes('单数')||String(l).includes('双数')),
+    win:'答对了!% 取余数是程序员判断"能不能整除"的小妙招,以后你会经常遇到它。'
+  },
+  {
+    goal:'用 while 做一个倒计时',
+    hint:'<b>while</b> 是"只要…就一直做"。注意循环里那句 <code style="font-family:\'JetBrains Mono\';background:#2b2420;color:#e6ddd0;padding:1px 6px;border-radius:5px">n = n - 1</code>——忘了写它,循环就永远停不下来(别怕,真停不下来我也会按住它的)。',
+    starter:'n = 3\nwhile n > 0:\n    print(n)\n    n = n - 1\nprint("发射!")',
+    check:(out)=>out.some(l=>String(l).includes('发射')),
+    win:'倒计时成功!while 和 for 是两兄弟:for 适合"知道跑几遍",while 适合"跑到条件不成立为止"。'
+  },
+  {
+    goal:'管理一张清单(列表)',
+    hint:'列表用 <b>[ ]</b> 装一排东西。.append 往末尾加一个,fruits[0] 取第 1 样(<b>程序员从 0 开始数!</b>)。试着再 append 一样你爱吃的。',
+    starter:'fruits = ["苹果", "香蕉"]\nfruits.append("橘子")\nprint("清单:", fruits)\nprint("第1样是", fruits[0])',
+    check:(out)=>out.length>=2,
+    win:'你学会列表了!一个班的名字、一周的计划、购物车里的东西……程序里"一串同类东西"全靠它。记住:第 1 样是 [0]。'
   }
 ];
 
-/* ===== 迷你 Python 解释器 =====
-   支持:变量、数字/字符串、加减乘除、文字拼接、len()、print、
-        if / elif / else、for ... in range(...) 循环、and/or/not、注释 */
+/* ===== 迷你 Python 解释器 v2 =====
+   支持:变量(可用中文名)、数字/文字/True/False/None、列表 [ ]、
+        带优先级的算术 + - * / % // ** 和括号、文字拼接与重复、
+        print / input / len / int / float / str / abs / round / range、
+        .append() / .upper() / .lower()、下标取值与赋值(含负数序号)、
+        if / elif / else、while、for ... in (range/列表/文字)、break / continue、
+        and / or / not、+= -= *= /=、# 注释、报错带行号 */
 function runMiniPython(code){
   const out=[];
   const vars={};
+  let curLine=0;
+  const BREAK_SIG={sig:'break'}, CONT_SIG={sig:'continue'};
+  const RESERVED=['if','elif','else','for','while','in','and','or','not','True','False','None','break','continue','def','return','print','input','len','int','float','str','abs','round','range'];
+
+  function err(msg){ throw (curLine?('第 '+curLine+' 行:'):'')+msg; }
 
   // 去掉行内注释(# 之后),但要避开字符串里的 #
   function stripComment(line){
@@ -684,86 +746,214 @@ function runMiniPython(code){
     return res;
   }
 
-  // 预处理:拆成 {indent, text},跳过空行/纯注释
+  // 预处理:拆成 {indent, text, no(原始行号)},跳过空行/纯注释
   const prog=[];
-  code.replace(/\r/g,'').split('\n').forEach(raw=>{
+  code.replace(/\r/g,'').split('\n').forEach((raw,ri)=>{
     const noc=stripComment(raw);
     if(noc.trim()==='')return;
-    prog.push({indent:noc.length-noc.trimStart().length, text:noc.trim()});
+    prog.push({indent:noc.length-noc.trimStart().length, text:noc.trim(), no:ri+1});
   });
 
   let steps=0;
-  function guard(){ if(++steps>200000) throw '循环跑得太多次啦(超过 20 万步),是不是范围太大,或写出了停不下来的循环?'; }
+  function guard(){ if(++steps>200000) err('代码跑了太多步(超过 20 万),是不是循环停不下来了?检查一下条件会不会变成"不成立"。'); }
 
-  // 求值:把一个表达式算成值(数字或字符串)
-  function evalExpr(expr){
-    expr=expr.trim();
-    if(expr==='') return '';
-    // 字符串:开头结尾是引号,且中间没有"提前闭合"(确保是单一完整字符串)
-    if((expr.startsWith('"')&&expr.endsWith('"'))||(expr.startsWith("'")&&expr.endsWith("'"))){
-      const q=expr[0];
-      let closedEarly=false;
-      for(let k=1;k<expr.length-1;k++){ if(expr[k]===q){closedEarly=true;break;} }
-      if(!closedEarly) return expr.slice(1,-1);
-    }
-    // 纯数字
-    if(/^-?\d+(\.\d+)?$/.test(expr)) return parseFloat(expr);
-    // 变量
-    if(/^[A-Za-z_]\w*$/.test(expr)){
-      if(expr in vars) return vars[expr];
-      throw '没有找到叫 '+expr+' 的盒子(变量)。是不是还没给它存东西,或者拼错了?';
-    }
-    // 四则运算:只处理 a op b 这种简单形式
-    const m=expr.match(/^(.+?)\s*([\+\-\*\/])\s*(.+)$/);
-    if(m){
-      const left=evalExpr(m[1]);
-      const right=evalExpr(m[3]);
-      if(typeof left==='number'&&typeof right==='number'){
-        if(m[2]==='+')return left+right;
-        if(m[2]==='-')return left-right;
-        if(m[2]==='*')return left*right;
-        if(m[2]==='/')return right===0?'∞(不能除以0)':left/right;
+  /* ---- 表达式分词 ---- */
+  function tokenize(s){
+    const toks=[];let i=0;
+    while(i<s.length){
+      const ch=s[i];
+      if(ch===' '||ch==='\t'){i++;continue;}
+      if(ch==='"'||ch==="'"){
+        let j=i+1,str='';
+        while(j<s.length&&s[j]!==ch){str+=s[j];j++;}
+        if(j>=s.length) err('引号没配对——文字的开头和结尾要用同一种引号包住');
+        toks.push({t:'str',v:str}); i=j+1; continue;
       }
-      if(m[2]==='+') return String(left)+String(right); // 文字拼接
-      throw '这一步算不出来:'+expr;
+      if(/[0-9]/.test(ch)){
+        let j=i;while(j<s.length&&/[0-9.]/.test(s[j]))j++;
+        const ns=s.slice(i,j);
+        if((ns.match(/\./g)||[]).length>1) err('这个数字里有两个小数点:'+ns);
+        toks.push({t:'num',v:parseFloat(ns)}); i=j; continue;
+      }
+      if(/[A-Za-z_一-龥]/.test(ch)){
+        let j=i;while(j<s.length&&/[A-Za-z0-9_一-龥]/.test(s[j]))j++;
+        toks.push({t:'name',v:s.slice(i,j)}); i=j; continue;
+      }
+      const two=s.substr(i,2);
+      if(two==='**'||two==='//'||two==='=='||two==='!='||two==='>='||two==='<='){toks.push({t:'op',v:two});i+=2;continue;}
+      if('+-*/%()[],.<>'.indexOf(ch)>=0){toks.push({t:'op',v:ch});i++;continue;}
+      if(ch==='=') err('这里出现了单个等号 = 。想"判断是否相等"要用两个等号 ==');
+      err('看不懂这个符号:'+ch);
     }
-    // len(...) 数一数有多少个字
-    let lm=expr.match(/^len\s*\((.*)\)$/);
-    if(lm){ return String(evalExpr(lm[1])).length; }
-    throw '看不懂这个内容:'+expr;
+    return toks;
   }
 
-  // 在最外层(不在括号/引号内)按某个关键词切开
-  function splitTop(c,kw){
-    const parts=[];let depth=0,q=null,last=0;
-    for(let i=0;i<c.length;i++){
-      const ch=c[i];
-      if(q){if(ch===q)q=null;continue;}
-      if(ch==='"'||ch==="'"){q=ch;continue;}
-      if(ch==='(')depth++;else if(ch===')')depth--;
-      if(depth===0 && c.substr(i,kw.length)===kw){parts.push(c.slice(last,i));i+=kw.length-1;last=i+1;}
+  // ---- 表达式求值(带运算优先级:or < and < not < 比较 < 加减 < 乘除取余 < 负号 < 乘方 < 取项) ----
+  function evalStr(src){
+    const p={toks:tokenize(src),i:0};
+    const v=pOr(p);
+    if(p.i<p.toks.length) err('这一段的后半部分看不懂:「'+src+'」(检查一下符号或括号?)');
+    return v;
+  }
+  function peek(p){return p.toks[p.i];}
+  function isOp(t,v){return t&&t.t==='op'&&t.v===v;}
+  function isName(t,v){return t&&t.t==='name'&&t.v===v;}
+  function expectOp(p,op,what){ const t=p.toks[p.i++]; if(!t||t.t!=='op'||t.v!==op) err(what||('这里少了一个 '+op)); }
+  function parseArgs(p){
+    const args=[];
+    if(!isOp(peek(p),')')){
+      args.push(pOr(p));
+      while(isOp(peek(p),',')){p.i++;args.push(pOr(p));}
     }
-    parts.push(c.slice(last));
-    return parts;
+    expectOp(p,')','括号没配对,少了一个 )');
+    return args;
+  }
+  function pOr(p){ let v=pAnd(p); while(isName(peek(p),'or')){p.i++; const r=pAnd(p); v=truthy(v)||truthy(r);} return v; }
+  function pAnd(p){ let v=pNot(p); while(isName(peek(p),'and')){p.i++; const r=pNot(p); v=truthy(v)&&truthy(r);} return v; }
+  function pNot(p){ if(isName(peek(p),'not')){p.i++; return !truthy(pNot(p));} return pCmp(p); }
+  function pCmp(p){
+    let v=pAdd(p);
+    const t=peek(p);
+    if(t&&t.t==='op'&&['==','!=','>=','<=','>','<'].indexOf(t.v)>=0){ p.i++; v=compare(v,t.v,pAdd(p)); }
+    return v;
+  }
+  function pAdd(p){ let v=pMul(p); for(;;){const t=peek(p); if(isOp(t,'+')||isOp(t,'-')){p.i++; v=binop(v,t.v,pMul(p));} else return v;} }
+  function pMul(p){ let v=pUnary(p); for(;;){const t=peek(p); if(isOp(t,'*')||isOp(t,'/')||isOp(t,'%')||isOp(t,'//')){p.i++; v=binop(v,t.v,pUnary(p));} else return v;} }
+  function pUnary(p){ if(isOp(peek(p),'-')){p.i++; const v=pUnary(p); if(typeof v!=='number')err('负号 - 只能放在数字前面'); return -v;} return pPow(p); }
+  function pPow(p){ const v=pPostfix(p); if(isOp(peek(p),'**')){p.i++; const r=pUnary(p); if(typeof v!=='number'||typeof r!=='number')err('** 乘方只能用在数字上'); return Math.pow(v,r);} return v; }
+  function pPostfix(p){
+    let v=pPrimary(p);
+    for(;;){
+      if(isOp(peek(p),'[')){ p.i++; const idx=pOr(p); expectOp(p,']','下标少了右方括号 ]'); v=indexGet(v,idx); continue; }
+      if(isOp(peek(p),'.')){
+        p.i++; const mn=p.toks[p.i++];
+        if(!mn||mn.t!=='name') err('点 . 后面要跟一个方法名,比如 .append(...)');
+        expectOp(p,'(','方法后面要跟括号,比如 fruits.append("橘子")');
+        v=callMethod(v,mn.v,parseArgs(p)); continue;
+      }
+      return v;
+    }
+  }
+  function pPrimary(p){
+    const t=p.toks[p.i++];
+    if(!t) err('这里好像缺了点内容(表达式没写完?)');
+    if(t.t==='num'||t.t==='str') return t.v;
+    if(isOp(t,'(')){ const v=pOr(p); expectOp(p,')','括号没配对,少了一个 )'); return v; }
+    if(isOp(t,'[')){
+      const arr=[];
+      if(isOp(peek(p),']')){p.i++;return arr;}
+      arr.push(pOr(p));
+      while(isOp(peek(p),',')){p.i++;arr.push(pOr(p));}
+      expectOp(p,']','列表的方括号没配对,少了一个 ]');
+      return arr;
+    }
+    if(t.t==='name'){
+      if(t.v==='True')return true; if(t.v==='False')return false; if(t.v==='None')return null;
+      if(isOp(peek(p),'(')){ p.i++; return callBuiltin(t.v,parseArgs(p)); }
+      if(t.v in vars) return vars[t.v];
+      err('没有找到叫 '+t.v+' 的盒子(变量)。是不是还没给它存东西,或者拼错了?');
+    }
+    err('看不懂这里:'+(t.v!==undefined?t.v:''));
   }
 
-  // 求值条件,返回 true/false(支持 and / or / not)
-  function evalCond(cond){
-    cond=cond.trim();
-    let ors=splitTop(cond,' or ');
-    if(ors.length>1) return ors.some(p=>evalCond(p));
-    let ands=splitTop(cond,' and ');
-    if(ands.length>1) return ands.every(p=>evalCond(p));
-    if(cond.startsWith('not ')) return !evalCond(cond.slice(4));
-    const m=cond.match(/^(.+?)\s*(>=|<=|==|!=|>|<)\s*(.+)$/);
-    if(!m) throw 'if 后面需要一个判断,比如 score >= 60';
-    const l=evalExpr(m[1]), r=evalExpr(m[3]);
-    switch(m[2]){
-      case '>=':return l>=r; case '<=':return l<=r;
-      case '>':return l>r;  case '<':return l<r;
-      case '==':return l==r; case '!=':return l!=r;
+  /* ---- 运算与内置函数 ---- */
+  function truthy(v){ if(Array.isArray(v))return v.length>0; return !!v; }
+  function typeName(v){ if(v===null)return '空值None'; if(typeof v==='boolean')return '真假值'; if(typeof v==='number')return '数字'; if(typeof v==='string')return '文字'; if(Array.isArray(v))return '列表'; return '未知东西'; }
+  function compare(l,op,r){
+    if(op==='=='||op==='!='){
+      let eq;
+      if(Array.isArray(l)&&Array.isArray(r)) eq=JSON.stringify(l)===JSON.stringify(r);
+      else eq=(typeof l===typeof r)&&l===r;
+      return op==='=='?eq:!eq;
+    }
+    if((typeof l==='number'&&typeof r==='number')||(typeof l==='string'&&typeof r==='string')){
+      switch(op){case'>':return l>r;case'<':return l<r;case'>=':return l>=r;case'<=':return l<=r;}
+    }
+    err('不能拿'+typeName(l)+'和'+typeName(r)+'比大小。提示:带引号的 "18" 是文字,不带引号的 18 才是数字');
+  }
+  function binop(l,op,r){
+    if(op==='+'){
+      if(typeof l==='number'&&typeof r==='number')return l+r;
+      if(typeof l==='string'&&typeof r==='string')return l+r;
+      if(Array.isArray(l)&&Array.isArray(r))return l.concat(r);
+      err('加号 + 两边要"同类":数字+数字,或文字+文字。现在是 '+typeName(l)+' + '+typeName(r)+'。想把数字接进文字,先用 str() 变成文字,比如 "总价" + str(36)');
+    }
+    if(op==='*'){
+      if(typeof l==='number'&&typeof r==='number')return l*r;
+      if(typeof l==='string'&&typeof r==='number'&&Number.isInteger(r))return r>0?l.repeat(Math.min(r,10000)):'';
+      if(typeof r==='string'&&typeof l==='number'&&Number.isInteger(l))return l>0?r.repeat(Math.min(l,10000)):'';
+      err('乘号 * 用在数字之间;或者"文字 * 整数"把文字重复几遍,比如 "哈" * 3');
+    }
+    if(typeof l!=='number'||typeof r!=='number') err(op+' 两边都得是数字才行(现在是'+typeName(l)+'和'+typeName(r)+')');
+    switch(op){
+      case '-':return l-r;
+      case '/': if(r===0)err('不能除以 0 哦(数学老师也不答应)'); return l/r;
+      case '%': if(r===0)err('不能对 0 取余数'); return ((l%r)+r)%r;
+      case '//': if(r===0)err('不能除以 0 哦'); return Math.floor(l/r);
     }
   }
+  function indexGet(v,idx){
+    if(typeof idx!=='number'||!Number.isInteger(idx)) err('方括号里的序号要是整数,比如 fruits[0]');
+    if(Array.isArray(v)||typeof v==='string'){
+      const n=v.length, i=idx<0?n+idx:idx;
+      if(i<0||i>=n) err('序号 '+idx+' 超出范围了——一共只有 '+n+' 个,而且程序员从 0 开始数(第1个是 [0],最后一个还能用 [-1])');
+      return v[i];
+    }
+    err('只有列表和文字能用 [序号] 取出第几个');
+  }
+  function callMethod(v,name,args){
+    if(Array.isArray(v)){
+      if(name==='append'){ if(args.length!==1)err('.append(...) 的括号里要放 1 个要添加的东西'); v.push(args[0]); return null; }
+      err('列表暂时只教了 .append(往末尾添加),其他方法以后再学');
+    }
+    if(typeof v==='string'){
+      if(name==='upper'){if(args.length)err('.upper() 括号里不用放东西');return v.toUpperCase();}
+      if(name==='lower'){if(args.length)err('.lower() 括号里不用放东西');return v.toLowerCase();}
+      err('文字暂时只教了 .upper()(变大写)和 .lower()(变小写)');
+    }
+    err(typeName(v)+'没有 .'+name+'() 这个方法');
+  }
+  function callBuiltin(name,args){
+    switch(name){
+      case 'print': out.push(args.map(fmt).join(' ')); return null;
+      case 'len':{ const v=args[0]; if(typeof v==='string'||Array.isArray(v))return v.length; err('len() 数的是文字或列表,比如 len("你好") 是 2'); }
+      case 'str': return fmt(args[0]);
+      case 'int':{ const v=args[0]; if(typeof v==='number')return Math.trunc(v); if(typeof v==='string'&&/^\s*-?\d+\s*$/.test(v))return parseInt(v,10); err('int() 没法把 '+fmt(args[0])+' 变成整数'); }
+      case 'float':{ const v=args[0]; if(typeof v==='number')return v; if(typeof v==='string'&&/^\s*-?\d+(\.\d+)?\s*$/.test(v))return parseFloat(v); err('float() 没法把它变成小数'); }
+      case 'abs':{ if(typeof args[0]!=='number')err('abs() 里要放数字'); return Math.abs(args[0]); }
+      case 'round':{ if(typeof args[0]!=='number')err('round() 里要放数字'); const k=Math.pow(10,args.length>1?args[1]:0); return Math.round(args[0]*k)/k; }
+      case 'range':{
+        let a=0,b=0,st=1;
+        if(args.length===1){b=args[0];}
+        else if(args.length===2){a=args[0];b=args[1];}
+        else if(args.length===3){a=args[0];b=args[1];st=args[2];}
+        else err('range() 要放 1~3 个数字,比如 range(1, 6)');
+        if(typeof a!=='number'||typeof b!=='number'||typeof st!=='number')err('range() 的括号里要放数字');
+        if(st===0)err('range 的步长不能是 0');
+        const arr=[];
+        for(let v=a; st>0? v<b : v>b; v+=st){ arr.push(v); if(arr.length>100000)err('range 太大啦(超过 10 万个数)'); }
+        return arr;
+      }
+      case 'input':{
+        const msg=args.length?fmt(args[0]):'';
+        const r=(typeof window!=='undefined'&&window.prompt)?window.prompt(msg):null;
+        return r===null?'':r;
+      }
+      default: err('不认识 '+name+'(...) 这个函数。目前支持:print input len int float str abs round range');
+    }
+  }
+  function fmt(v){
+    if(v===null)return 'None';
+    if(v===true)return 'True';
+    if(v===false)return 'False';
+    if(typeof v==='number')return Number.isInteger(v)?String(v):String(parseFloat(v.toFixed(6)));
+    if(Array.isArray(v))return '['+v.map(repr).join(', ')+']';
+    return String(v);
+  }
+  function repr(v){ return typeof v==='string'? "'"+v+"'" : fmt(v); }
+
+  /* ---- 语句执行 ---- */
+  const NAME_RE='[A-Za-z_\\u4e00-\\u9fa5][A-Za-z0-9_\\u4e00-\\u9fa5]*';
 
   // 找出一个代码块的结束位置(后面所有缩进更深的行)
   function blockEnd(i,headerIndent){
@@ -776,33 +966,50 @@ function runMiniPython(code){
   function execBlock(start,end){
     let i=start;
     while(i<end){
-      const ln=prog[i];let m;
+      const ln=prog[i];curLine=ln.no;let m;guard();
       // if / elif / else 链
       if(m=ln.text.match(/^if\s+(.+):$/)){
         let done=false;
         const bEnd=blockEnd(i,ln.indent);
-        if(evalCond(m[1])){ execBlock(i+1,bEnd); done=true; }
+        if(bEnd===i+1) err('if 的下一行要往右缩进 4 格,写"条件成立时做的事"');
+        if(truthy(evalStr(m[1]))){ execBlock(i+1,bEnd); done=true; }
         i=bEnd;
         while(i<end && prog[i].indent===ln.indent && (/^elif\s+.+:$/.test(prog[i].text)||prog[i].text==='else:')){
           const cl=prog[i],cEnd=blockEnd(i,cl.indent);let em;
-          if(em=cl.text.match(/^elif\s+(.+):$/)){ if(!done&&evalCond(em[1])){execBlock(i+1,cEnd);done=true;} }
+          curLine=cl.no;
+          if(em=cl.text.match(/^elif\s+(.+):$/)){ if(!done&&truthy(evalStr(em[1]))){execBlock(i+1,cEnd);done=true;} }
           else { if(!done){execBlock(i+1,cEnd);done=true;} }
           i=cEnd;
         }
         continue;
       }
-      // for ... in range(...)
-      if(m=ln.text.match(/^for\s+([A-Za-z_]\w*)\s+in\s+range\s*\((.+)\)\s*:$/)){
-        const vn=m[1];
-        const args=splitArgs(m[2]).map(a=>evalExpr(a));
-        let a=0,b=0,st=1;
-        if(args.length===1){b=args[0];}
-        else if(args.length===2){a=args[0];b=args[1];}
-        else {a=args[0];b=args[1];st=args[2];}
-        if(typeof a!=='number'||typeof b!=='number'||typeof st!=='number') throw 'range() 的括号里要放数字哦';
-        if(st===0) throw 'range 的步长不能是 0';
+      // while 循环
+      if(m=ln.text.match(/^while\s+(.+):$/)){
         const bEnd=blockEnd(i,ln.indent);
-        for(let v=a; st>0? v<b : v>b; v+=st){ vars[vn]=v; guard(); execBlock(i+1,bEnd); }
+        if(bEnd===i+1) err('while 的下一行要往右缩进 4 格,写"每一轮要做的事"');
+        const cond=m[1], hdrLine=ln.no;
+        for(;;){
+          curLine=hdrLine; guard();
+          if(!truthy(evalStr(cond))) break;
+          try{ execBlock(i+1,bEnd); }
+          catch(e){ if(e===BREAK_SIG)break; if(e===CONT_SIG)continue; throw e; }
+        }
+        i=bEnd;continue;
+      }
+      // for ... in (range / 列表 / 文字)
+      if(m=ln.text.match(new RegExp('^for\\s+('+NAME_RE+')\\s+in\\s+(.+):$'))){
+        const bEnd=blockEnd(i,ln.indent);
+        if(bEnd===i+1) err('for 的下一行要往右缩进 4 格,写"每一轮要做的事"');
+        const vn=m[1];
+        let it=evalStr(m[2]);
+        if(typeof it==='string') it=[...it];
+        if(!Array.isArray(it)) err('for ... in 后面要跟能"逐个拿"的东西:range(...)、列表或文字');
+        let stop=false;
+        for(const v of it){
+          vars[vn]=v; guard();
+          try{ execBlock(i+1,bEnd); }
+          catch(e){ if(e===BREAK_SIG){stop=true;break;} if(e===CONT_SIG)continue; throw e; }
+        }
         i=bEnd;continue;
       }
       execSimple(ln.text);
@@ -810,40 +1017,49 @@ function runMiniPython(code){
     }
   }
 
-  function execSimple(line){
-    // print(...)
-    let pm=line.match(/^print\s*\((.*)\)$/);
-    if(pm){
-      const parts=splitArgs(pm[1]).map(a=>{
-        const v=evalExpr(a);
-        return typeof v==='number'? (Number.isInteger(v)?v:parseFloat(v.toFixed(4))) : v;
-      });
-      out.push(parts.join(' '));
+  function execSimple(text){
+    if(text==='break') throw BREAK_SIG;
+    if(text==='continue') throw CONT_SIG;
+    let m;
+    // 复合赋值 a += 1 (等于 a = a + 1)
+    if(m=text.match(new RegExp('^('+NAME_RE+')\\s*([+\\-*/])=\\s*(.+)$'))){
+      if(!(m[1] in vars)) err('盒子 '+m[1]+' 还不存在,先用 = 给它存个东西,才能用 '+m[2]+'=');
+      vars[m[1]]=binop(vars[m[1]],m[2],evalStr(m[3]));
       return;
     }
-    // 赋值 name = value  (但不是 ==)
-    let am=line.match(/^([A-Za-z_]\w*)\s*=\s*([^=].*)$/);
-    if(am){ vars[am[1]]=evalExpr(am[2]); return; }
-    throw '这一行看不懂:'+line+'  (检查一下拼写、引号或括号?)';
-  }
-
-  // 按逗号分割参数(避开引号和括号内的逗号)
-  function splitArgs(s){
-    const res=[];let cur='',q=null,depth=0;
-    for(const ch of s){
-      if(q){cur+=ch;if(ch===q)q=null;continue;}
-      if(ch==='"'||ch==="'"){q=ch;cur+=ch;continue;}
-      if(ch==='(')depth++;
-      if(ch===')')depth--;
-      if(ch===','&&depth===0){res.push(cur);cur='';continue;}
-      cur+=ch;
+    // 下标赋值 fruits[0] = "梨"
+    if(m=text.match(new RegExp('^('+NAME_RE+')\\s*\\[(.+)\\]\\s*=\\s*([^=].*)$'))){
+      if(!(m[1] in vars)) err('没有找到叫 '+m[1]+' 的盒子(变量)');
+      const arr=vars[m[1]];
+      if(!Array.isArray(arr)) err('只有列表能用 [序号] = ... 替换其中一项');
+      const idx=evalStr(m[2]);
+      if(typeof idx!=='number'||!Number.isInteger(idx)) err('方括号里的序号要是整数');
+      const n=arr.length, ii=idx<0?n+idx:idx;
+      if(ii<0||ii>=n) err('序号 '+idx+' 超出范围了(列表一共 '+n+' 项,从 0 开始数)');
+      arr[ii]=evalStr(m[3]);
+      return;
     }
-    if(cur.trim()!=='')res.push(cur);
-    return res;
+    // 普通赋值 name = value(但不是 ==)
+    if(m=text.match(new RegExp('^('+NAME_RE+')\\s*=\\s*([^=].*)$'))){
+      if(RESERVED.indexOf(m[1])>=0) err('「'+m[1]+'」是 Python 自己要用的词,不能拿来当盒子(变量)名,换个名字吧');
+      vars[m[1]]=evalStr(m[2]);
+      return;
+    }
+    // 常见笔误的温柔提示
+    if(/^print\b/.test(text)&&!/^print\s*\(/.test(text)) err('print 后面要跟括号,比如 print("你好")');
+    if(/^def\b/.test(text)) err('自定义函数 def 这里还不支持,先用 print、if、for、while 玩起来,以后再学它');
+    const kw=text.match(/^(if|elif|else|while|for)\b/);
+    if(kw) err('这一行像是 '+kw[1]+' 语句,但格式不对——结尾是不是少了冒号 : ?');
+    // 表达式语句(print(...)、fruits.append(...) 等)
+    evalStr(text);
   }
 
-  execBlock(0,prog.length);
-  return out;
+  try{ execBlock(0,prog.length); }
+  catch(e){
+    if(e===BREAK_SIG||e===CONT_SIG) throw '第 '+curLine+' 行:break / continue 只能写在 for 或 while 循环里面';
+    throw e;
+  }
+  return {out:out, vars:vars};
 }
 
 /* ===== 渲染动手写练习 ===== */
@@ -857,11 +1073,13 @@ writeTasks.forEach((t,idx)=>{
     '<textarea class="code-editor" spellcheck="false">'+t.starter+'</textarea>'+
     '<div class="wrun-row"><button class="wrun-btn">▶ 运行我写的代码</button><button class="wreset-btn">↺ 还原</button></div>'+
     '<div class="woutput"><span class="sys">写完上面的代码,点"运行"看结果 →</span></div>'+
+    '<div class="wvarbox"></div>'+
     '<div class="wsuccess">🎉 '+t.win+'</div>';
   const editor=card.querySelector('.code-editor');
   const runBtn=card.querySelector('.wrun-btn');
   const resetBtn=card.querySelector('.wreset-btn');
   const outEl=card.querySelector('.woutput');
+  const varsEl=card.querySelector('.wvarbox');
   const winEl=card.querySelector('.wsuccess');
 
   // Tab 键插入缩进而不是跳走
@@ -876,18 +1094,21 @@ writeTasks.forEach((t,idx)=>{
   runBtn.addEventListener('click',()=>{
     winEl.classList.remove('show');
     try{
-      const out=runMiniPython(editor.value);
+      const res=runMiniPython(editor.value);
+      const out=res.out;
       if(out.length===0){
         outEl.innerHTML='<span class="sys">(代码跑通了,但没有任何 print,所以屏幕上看不到东西。试着加一行 print(...) 把结果显示出来?)</span>';
       }else{
         outEl.innerHTML=out.map(l=>'<span class="ok">> '+escapeHtml(String(l))+'</span>').join('\n');
       }
+      renderVars(varsEl,res.vars);
       if(t.check(out.map(x=>String(x)))){
         winEl.classList.add('show');
         markWriteDone(idx);
       }
     }catch(err){
       outEl.innerHTML='<span class="err">⚠ 电脑没看懂这里:'+escapeHtml(String(err))+'</span>\n<span class="sys">(别慌,改一下再试。报错是正常的!)</span>';
+      renderVars(varsEl,{});
     }
   });
 
@@ -895,10 +1116,30 @@ writeTasks.forEach((t,idx)=>{
     editor.value=t.starter;
     outEl.innerHTML='<span class="sys">已还原。写完点"运行"看结果 →</span>';
     winEl.classList.remove('show');
+    renderVars(varsEl,{});
   });
 
   wWrap.appendChild(card);
 });
+
+/* ===== 变量盒子可视化:运行后把每个变量画成一个"贴标签的盒子" ===== */
+function showVal(v){
+  if(v===null)return 'None';
+  if(v===true)return 'True';
+  if(v===false)return 'False';
+  if(typeof v==='number')return Number.isInteger(v)?String(v):String(parseFloat(v.toFixed(6)));
+  if(Array.isArray(v))return '['+v.map(x=>typeof x==='string'?"'"+x+"'":showVal(x)).join(', ')+']';
+  if(typeof v==='string')return '"'+v+'"';
+  return String(v);
+}
+function renderVars(el,vars){
+  const keys=Object.keys(vars||{});
+  if(!keys.length){ el.innerHTML=''; el.style.display='none'; return; }
+  el.style.display='block';
+  el.innerHTML='📦 跑完后,盒子里装着:'+keys.map(k=>
+    '<span class="vchip"><b>'+escapeHtml(k)+'</b> = '+escapeHtml(showVal(vars[k]))+'</span>'
+  ).join('');
+}
 
 /* ===== 进度记忆(存在浏览器里,下次打开还记得) ===== */
 function getWriteDone(){ try{return JSON.parse(localStorage.getItem('zxbc_write_done')||'[]');}catch(e){return [];} }
@@ -932,7 +1173,7 @@ renderWriteProgress();
   const ed=document.getElementById('sandboxEditor');
   const outEl=document.getElementById('sandboxOut');
   if(!ed)return;
-  const demo='# 试试改改下面这几行,或者全删了自己写\nname = "小明"\nprint("你好,", name)\n\ntotal = 0\nfor i in range(1, 6):\n    total = total + i\nprint("1 加到 5 等于", total)';
+  const demo='# 试试改改下面这几行,或者全删了自己写\nname = "小明"\nprint("你好,", name)\n\nfruits = ["苹果", "香蕉"]\nfruits.append("橘子")\nprint("水果清单:", fruits)\n\ntotal = 0\nfor i in range(1, 6):\n    total += i\nprint("1 加到 5 等于", total)';
   ed.value=localStorage.getItem('zxbc_sandbox')||demo;
   ed.addEventListener('keydown',(e)=>{
     if(e.key==='Tab'){e.preventDefault();
@@ -943,12 +1184,15 @@ renderWriteProgress();
   });
   ed.addEventListener('input',()=>localStorage.setItem('zxbc_sandbox',ed.value));
   document.getElementById('sandboxRun').addEventListener('click',()=>{
+    const varsEl=document.getElementById('sandboxVars');
     try{
       const r=runMiniPython(ed.value);
-      outEl.innerHTML=r.length?r.map(l=>'<span class="ok">> '+escapeHtml(String(l))+'</span>').join('\n')
+      outEl.innerHTML=r.out.length?r.out.map(l=>'<span class="ok">> '+escapeHtml(String(l))+'</span>').join('\n')
         :'<span class="sys">(代码跑通了,但没有 print,所以屏幕上看不到东西。加一行 print(...) 试试?)</span>';
+      renderVars(varsEl,r.vars);
     }catch(err){
       outEl.innerHTML='<span class="err">⚠ 电脑没看懂:'+escapeHtml(String(err))+'</span>\n<span class="sys">(改改再试,报错很正常!)</span>';
+      renderVars(varsEl,{});
     }
   });
   document.getElementById('sandboxClear').addEventListener('click',()=>{
@@ -984,7 +1228,19 @@ const quizData=[
   {q:'total = 10 * 3 执行完,盒子 total 里装的是?',code:'total = 10 * 3',
    opts:['"10 * 3"这串文字','13','30','报错'],
    answer:2,
-   exp:'太棒了!* 是乘号,10 乘 3 等于 30,所以 total 里装的是数字 30。你已经掌握看代码的诀窍了!'}
+   exp:'太棒了!* 是乘号,10 乘 3 等于 30,所以 total 里装的是数字 30。你已经掌握看代码的诀窍了!'},
+  {q:'这段代码会显示什么?(小心,程序员从 0 开始数!)',code:'names = ["小明", "小红", "小刚"]\nprint(names[1])',
+   opts:['小明','小红','小刚','报错'],
+   answer:1,
+   exp:'对!列表的格子从 0 开始编号:[0] 是小明,[1] 是小红,[2] 是小刚。所以 names[1] 取出来的是第 2 个——小红。'},
+  {q:'这个循环会显示几次"嗨"?',code:'for i in range(3):\n    print("嗨")',
+   opts:['1 次','2 次','3 次','停不下来'],
+   answer:2,
+   exp:'没错!range(3) 是 0、1、2 三个数,所以循环跑 3 遍,"嗨"显示 3 次。'},
+  {q:'x = "5" 和 x = 5,这两行有什么区别?',code:'x = "5"\nx = 5',
+   opts:['完全一样','"5" 是文字,5 是数字','"5" 比 5 大','都会报错'],
+   answer:1,
+   exp:'答对了!加了引号的 "5" 是文字(一个字符),没引号的 5 才是能做算术的数字。"5" + "5" 拼出来是 "55",而 5 + 5 等于 10——区别巨大!'}
 ];
 
 let qIndex=0,qScore=0;
@@ -994,7 +1250,7 @@ function renderQuiz(){
     let best=+(localStorage.getItem('zxbc_quiz_best')||0);
     if(qScore>best){ best=qScore; localStorage.setItem('zxbc_quiz_best',best); }
     quizCard.innerHTML='<div class="quiz-done"><div class="big">'+qScore+'/'+quizData.length+'</div><h3 style="font-family:\'Noto Serif SC\';margin:10px 0">'+
-      (qScore>=4?'厉害!你已经能看懂基础代码了 🎉':qScore>=2?'不错的开始!回去再看看前面几站 💪':'没关系,代码就是要多看几遍 🌱')+
+      (qScore>=quizData.length-1?'厉害!你已经能看懂基础代码了 🎉':qScore>=quizData.length/2?'不错的开始!回去再看看前面几站 💪':'没关系,代码就是要多看几遍 🌱')+
       '</h3><p style="color:#8a7d6e">你现在已经知道:变量是盒子、print是显示、if是判断、#是注释,而且你还<b>亲手写出并运行了自己的代码</b>。从"看不懂天书"到"能读会写",这一步你已经迈出去了。</p>'+
       '<p style="color:#8a7d6e;margin-top:6px">🏆 历史最好成绩:'+best+' / '+quizData.length+'</p>'+
       '<button class="restart" onclick="restartQuiz()">再做一遍</button></div>';
