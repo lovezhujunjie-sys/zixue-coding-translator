@@ -232,6 +232,40 @@
   .wvarbox{margin-top:10px;font-size:13px;color:var(--soft);display:none;line-height:2.2}
   .vchip{display:inline-block;background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:2px 10px;margin-left:6px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink)}
   .vchip b{color:var(--accent);font-weight:700}
+
+  /* ===== 听学电台 ===== */
+  .radio-now{text-align:center;padding:6px 4px 14px}
+  .radio-ep-title{font-family:'Noto Serif SC',serif;font-weight:900;font-size:19px;color:var(--accent-2)}
+  .radio-seg-text{margin-top:12px;font-size:16.5px;line-height:1.9;min-height:92px;color:var(--ink);background:var(--paper-2);border-radius:12px;padding:14px 16px;text-align:left}
+  .radio-progress{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--soft)}
+  .radio-controls{display:flex;justify-content:center;align-items:center;gap:18px;margin:10px 0 4px}
+  .rc-btn{
+    width:58px;height:58px;border-radius:50%;border:1px solid var(--line);cursor:pointer;
+    background:var(--paper);font-size:22px;color:var(--ink);transition:.15s;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .rc-btn:hover{transform:scale(1.06);border-color:var(--soft)}
+  .rc-btn:active{transform:scale(.96)}
+  .rc-main{width:84px;height:84px;font-size:34px;background:var(--accent);color:#fff;border:none;box-shadow:0 6px 0 #a73a26}
+  .rc-main:active{box-shadow:0 2px 0 #a73a26;transform:translateY(3px)}
+  .radio-row{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:14px}
+  .radio-label{font-size:14px;color:var(--soft);font-weight:700}
+  .rate-pills{display:flex;gap:6px}
+  .rate-pill{font-family:'JetBrains Mono',monospace;font-size:13px;cursor:pointer;background:var(--card);border:1px solid var(--line);color:var(--soft);padding:6px 13px;border-radius:30px;transition:.15s}
+  .rate-pill.active{background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:700}
+  .radio-toggle{font-size:14px;color:#5a4f44;display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+  .radio-toggle input{width:17px;height:17px;accent-color:var(--accent-2);cursor:pointer}
+  .ep-item{
+    display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:.18s;
+  }
+  .ep-item:hover{transform:translateX(4px);border-color:var(--soft)}
+  .ep-item.playing{border-color:var(--accent);background:rgba(224,83,58,.06)}
+  .ep-item .ep-icon{font-size:22px;flex-shrink:0}
+  .ep-item .ep-name{font-weight:700;font-size:15.5px;flex:1}
+  .ep-item .ep-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--soft);flex-shrink:0}
+  .ep-item .ep-live{color:var(--accent);font-size:12.5px;font-weight:700;flex-shrink:0;display:none}
+  .ep-item.playing .ep-live{display:inline}
 </style>
 </head>
 <body>
@@ -249,6 +283,7 @@
   <button class="tab" data-tab="write">④ 自己动手写</button>
   <button class="tab" data-tab="quiz">⑤ 小测验</button>
   <button class="tab" data-tab="sandbox">⑥ 自由练习场</button>
+  <button class="tab" data-tab="radio">⑦ 听学电台 🎧</button>
 </nav>
 
 <main>
@@ -406,6 +441,49 @@
       · 做一张购物清单列表,.append 加东西、len() 数数量、[0] 取第一样<br>
       · 用 <code class="ic">input("你叫什么名字?")</code> 问自己问题(会弹出输入框),再 print 出来<br>
       · 变量名可以用中文!试试 <code class="ic">价格 = 18</code> 然后 <code class="ic">print(价格 * 2)</code></p>
+    </div>
+  </section>
+
+  <!-- ========== 面板7:听学电台 ========== -->
+  <section class="panel" id="radio">
+    <div class="section-eyebrow">听学电台 · 解放双眼</div>
+    <h2 class="section-title">戴上耳机,开车跑步也能学 🎧</h2>
+    <p class="section-desc">把整套课程做成了"电台节目":概念课、词典磨耳朵、逐行翻译、听力问答。<b>点一下播放,然后手机一放,用耳朵学</b>。支持断点续听——下次打开,从上次听到的地方继续。</p>
+
+    <div class="wcard" id="radioPlayer">
+      <div class="radio-now">
+        <div class="radio-ep-title" id="radioEpTitle">准备就绪</div>
+        <div class="radio-seg-text" id="radioSegText">点下面的 ▶ 开始收听。播放中这里会显示正在朗读的内容,瞄一眼就能跟上。</div>
+        <div class="radio-progress" id="radioProgress"></div>
+      </div>
+      <div class="radio-controls">
+        <button class="rc-btn" id="rcPrevSeg" title="上一段" aria-label="上一段">⏮</button>
+        <button class="rc-btn rc-main" id="rcPlay" title="播放/暂停" aria-label="播放或暂停">▶</button>
+        <button class="rc-btn" id="rcNextSeg" title="下一段" aria-label="下一段">⏭</button>
+      </div>
+      <div class="radio-row">
+        <span class="radio-label">语速</span>
+        <div id="ratePicker" class="rate-pills">
+          <button class="rate-pill" data-rate="0.8">0.8x</button>
+          <button class="rate-pill active" data-rate="1">1x</button>
+          <button class="rate-pill" data-rate="1.2">1.2x</button>
+          <button class="rate-pill" data-rate="1.5">1.5x</button>
+        </div>
+      </div>
+      <div class="radio-row">
+        <label class="radio-toggle"><input type="checkbox" id="rcAutoNext" checked> 连播下一集</label>
+        <label class="radio-toggle"><input type="checkbox" id="rcWake" checked> 播放时屏幕常亮</label>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Noto Serif SC';font-size:20px;margin:26px 0 12px">📻 节目单</h3>
+    <div id="radioEpList"></div>
+
+    <div class="card" style="margin-top:26px;border-style:dashed;border-color:var(--gold)">
+      <h3 style="font-size:19px">📌 实用小提示</h3>
+      <p style="margin-top:10px"><b>1. 声音不好听?</b>朗读用的是手机/电脑自带的中文语音。iPhone 可以在「设置→辅助功能→朗读内容→声音→中文」里下载更自然的高质量语音,下载后这里自动变好听。</p>
+      <p style="margin-top:8px"><b>2. 锁屏会暂停。</b>手机锁屏或切走 App,朗读会被系统打断——所以播放时我会帮你保持屏幕常亮(可关)。开车建议放在支架上,只用耳朵,别看屏幕。</p>
+      <p style="margin-top:8px"><b>3. 听不懂就倒回去。</b>⏮ 回上一段,多听几遍很正常。听完一轮,回「自己动手写」敲一敲,效果翻倍。</p>
     </div>
   </section>
 </main>
@@ -1285,6 +1363,185 @@ function renderQuiz(){
 }
 function restartQuiz(){qIndex=0;qScore=0;renderQuiz();}
 renderQuiz();
+
+/* ===== 听学电台:把整套课程读给你听(Web Speech 语音合成,零依赖离线可用) ===== */
+const Radio=(function(){
+  if(!('speechSynthesis' in window)){
+    const p=document.getElementById('radioPlayer');
+    if(p)p.innerHTML='<p style="color:var(--soft)">抱歉,这个浏览器不支持语音朗读。换 Chrome / Safari / Edge 就能听了。</p>';
+    return null;
+  }
+  let episodes=[];
+  let ep=0,seg=0,playing=false,rate=1,autoNext=true,keepAwake=true,wakeLock=null,advTimer=null;
+
+  /* ---- 把符号代码转成能听懂的中文 ---- */
+  function codeSpeech(c){
+    return c.replace(/\n/g,'。').replace(/==/g,' 双等号 ').replace(/>=/g,' 大于等于 ').replace(/<=/g,' 小于等于 ')
+      .replace(/!=/g,' 不等于 ').replace(/=/g,' 等号 ').replace(/\*/g,' 乘 ').replace(/%/g,' 取余 ')
+      .replace(/#/g,'。井号注释:').replace(/_/g,' ').replace(/"/g,' 引号 ').replace(/\(/g,' 括号 ').replace(/\)/g,' ');
+  }
+  function stripEmoji(s){ return s.replace(/^[^一-龥A-Za-z0-9]+/,'').trim(); }
+
+  /* ---- 从已有内容自动生成节目单(内容只维护一份) ---- */
+  function build(){
+    episodes=[];
+    // 第1集:代码是啥(读第一站的 9 张卡片)
+    const intro=[{text:'欢迎收听代码翻译官听学电台。这一集讲:代码到底是什么。闭着眼睛听就行,每个概念我都用生活打比方讲给你。'}];
+    document.querySelectorAll('#intro .card').forEach(card=>{
+      intro.push({text:card.querySelector('h3').textContent.replace(/^\s*\d+\s*/,'').trim()+'。',pauseAfter:250});
+      card.querySelectorAll('p, .analogy').forEach(el=>{
+        const t=el.textContent.replace(/\s+/g,' ').trim();
+        if(t)intro.push({text:t,pauseAfter:350});
+      });
+    });
+    intro.push({text:'这一集就到这里。下一集,我们把程序员的黑话一个一个磨进耳朵。'});
+    episodes.push({icon:'🍜',name:'代码是啥 · 九个比方',segs:intro});
+    // 词典磨耳朵(按分类,每类一集)
+    glossaryGroups.forEach(g=>{
+      const cat=stripEmoji(g.cat);
+      const s=[{text:'黑话词典磨耳朵,'+cat+'。每个词我先念英文,再讲中文意思,不用记,混个耳熟就赢了。'}];
+      g.terms.forEach(t=>{ s.push({text:t.en+','+t.cn+'。'+t.meaning,pauseAfter:450}); });
+      s.push({text:cat+',这一类讲完了。'});
+      episodes.push({icon:'📖',name:'词典磨耳朵 · '+cat,segs:s});
+    });
+    // 逐行翻译(每个例子一集)
+    examples.forEach(ex=>{
+      const nm=stripEmoji(ex.title);
+      const s=[{text:'逐行听懂一段真实代码:'+nm+'。我一行一行把它翻译成人话。'}];
+      ex.lines.forEach((d,i)=>{
+        s.push({text:'第'+(i+1)+'行,'+d.label.replace('#','井号')+'。这行的意思是:'+d.human+'。'+d.detail,pauseAfter:450});
+      });
+      s.push({text:'这段代码运行起来,电脑会显示:'+ex.output.join('。')+'。'+nm+',听懂收工。'});
+      episodes.push({icon:ex.title.split(' ')[0]||'🎬',name:'逐行翻译 · '+nm,segs:s});
+    });
+    // 听力问答(读题→留时间想→公布答案)
+    const qs=[{text:'听力问答时间。我读题目和选项,你在心里选一个,我数三秒就公布答案。不用动手,放心听。'}];
+    quizData.forEach((d,i)=>{
+      qs.push({text:'第'+(i+1)+'题。'+d.q+'。代码是:'+codeSpeech(d.code)+'。选项'+d.opts.map((o,j)=>(j+1)+','+o).join('。选项')+'。请作答。',pauseAfter:3200});
+      qs.push({text:'公布答案:选项'+(d.answer+1)+','+d.opts[d.answer]+'。'+d.exp,pauseAfter:700});
+    });
+    qs.push({text:'听力问答全部结束。答对多少不重要,耳朵熟了,眼睛再看代码就不慌了。记得回动手写那一站,亲手敲一敲。'});
+    episodes.push({icon:'🎯',name:'听力问答 · 闭眼自测',segs:qs});
+  }
+
+  /* ---- 语音引擎 ---- */
+  function pickVoice(){
+    const vs=speechSynthesis.getVoices().filter(v=>/^zh/i.test(v.lang));
+    return vs.find(v=>/Tingting|Ting-Ting|Xiaoxiao|Mei-Jia|Meijia|Yating/i.test(v.name))||vs.find(v=>/CN/i.test(v.lang))||vs[0]||null;
+  }
+  function speakSeg(){
+    const e=episodes[ep];
+    if(!e){stop();return;}
+    if(seg>=e.segs.length){
+      if(autoNext&&ep<episodes.length-1){ep++;seg=0;}
+      else{stop('这一集听完啦 🎉 在下面节目单里挑下一集吧。');return;}
+    }
+    const s=episodes[ep].segs[seg];
+    updateUI();save();
+    const u=new SpeechSynthesisUtterance(s.text);
+    u.rate=rate;u.lang='zh-CN';
+    const v=pickVoice();if(v)u.voice=v;
+    u.onend=()=>{ if(!playing)return; advTimer=setTimeout(()=>{seg++;speakSeg();}, s.pauseAfter||150); };
+    u.onerror=()=>{ if(!playing)return; advTimer=setTimeout(()=>{seg++;speakSeg();},200); };
+    speechSynthesis.speak(u);
+  }
+  function play(){
+    if(playing)return;
+    playing=true;
+    speechSynthesis.cancel();
+    requestWake();
+    speakSeg();
+  }
+  function pause(){
+    playing=false;
+    clearTimeout(advTimer);
+    speechSynthesis.cancel();
+    releaseWake();
+    updateUI();
+  }
+  function stop(msg){
+    playing=false;clearTimeout(advTimer);speechSynthesis.cancel();releaseWake();
+    seg=0;updateUI();save();
+    if(msg)document.getElementById('radioSegText').textContent=msg;
+  }
+  function jumpSeg(d){
+    const was=playing;
+    playing=false;clearTimeout(advTimer);speechSynthesis.cancel();
+    seg+=d;
+    if(seg<0){ if(ep>0){ep--;seg=episodes[ep].segs.length-1;} else seg=0; }
+    if(seg>=episodes[ep].segs.length){ if(ep<episodes.length-1){ep++;seg=0;} else seg=episodes[ep].segs.length-1; }
+    if(was){playing=true;speakSeg();}else{updateUI();save();}
+  }
+  function setEp(i){
+    playing=false;clearTimeout(advTimer);speechSynthesis.cancel();
+    ep=i;seg=0;
+    playing=true;requestWake();speakSeg();
+  }
+
+  /* ---- 屏幕常亮(防锁屏打断) ---- */
+  async function requestWake(){
+    if(!keepAwake||!('wakeLock' in navigator))return;
+    try{ wakeLock=await navigator.wakeLock.request('screen'); }catch(e){}
+  }
+  function releaseWake(){ try{ if(wakeLock)wakeLock.release(); }catch(e){} wakeLock=null; }
+  document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'&&playing)requestWake(); });
+
+  /* ---- 记忆与界面 ---- */
+  function save(){ try{ localStorage.setItem('zxbc_radio',JSON.stringify({ep,seg,rate,autoNext,keepAwake})); }catch(e){} }
+  function load(){
+    try{
+      const d=JSON.parse(localStorage.getItem('zxbc_radio')||'{}');
+      if(typeof d.ep==='number'&&d.ep<episodes.length)ep=d.ep;
+      if(typeof d.seg==='number')seg=Math.min(d.seg,episodes[ep].segs.length-1);
+      if(d.rate)rate=d.rate;
+      if(typeof d.autoNext==='boolean')autoNext=d.autoNext;
+      if(typeof d.keepAwake==='boolean')keepAwake=d.keepAwake;
+    }catch(e){}
+  }
+  function updateUI(){
+    const e=episodes[ep];
+    document.getElementById('radioEpTitle').textContent=e.icon+' '+e.name;
+    const s=e.segs[Math.min(seg,e.segs.length-1)];
+    document.getElementById('radioSegText').textContent=s?s.text:'';
+    document.getElementById('radioProgress').textContent='第 '+(ep+1)+' / '+episodes.length+' 集 · 第 '+(Math.min(seg,e.segs.length-1)+1)+' / '+e.segs.length+' 段'+(playing?' · 播放中':'');
+    document.getElementById('rcPlay').textContent=playing?'⏸':'▶';
+    document.querySelectorAll('.ep-item').forEach((el,i)=>el.classList.toggle('playing',i===ep));
+    document.querySelectorAll('.rate-pill').forEach(b=>b.classList.toggle('active',+b.dataset.rate===rate));
+    document.getElementById('rcAutoNext').checked=autoNext;
+    document.getElementById('rcWake').checked=keepAwake;
+  }
+  function renderEpList(){
+    const list=document.getElementById('radioEpList');
+    list.innerHTML='';
+    episodes.forEach((e,i)=>{
+      const d=document.createElement('div');
+      d.className='ep-item';
+      d.setAttribute('role','button');d.tabIndex=0;
+      d.innerHTML='<span class="ep-icon">'+e.icon+'</span><span class="ep-name">'+escapeHtml(e.name)+'</span><span class="ep-live">▶ 正在播</span><span class="ep-count">'+e.segs.length+' 段</span>';
+      d.addEventListener('click',()=>setEp(i));
+      d.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();setEp(i);}});
+      list.appendChild(d);
+    });
+  }
+
+  /* ---- 初始化 ---- */
+  build();load();renderEpList();updateUI();
+  document.getElementById('rcPlay').addEventListener('click',()=>{ playing?pause():play(); });
+  document.getElementById('rcPrevSeg').addEventListener('click',()=>jumpSeg(-1));
+  document.getElementById('rcNextSeg').addEventListener('click',()=>jumpSeg(1));
+  document.querySelectorAll('.rate-pill').forEach(b=>b.addEventListener('click',()=>{
+    rate=+b.dataset.rate;save();updateUI();
+    if(playing){ clearTimeout(advTimer);speechSynthesis.cancel();speakSeg(); }
+  }));
+  document.getElementById('rcAutoNext').addEventListener('change',e=>{autoNext=e.target.checked;save();});
+  document.getElementById('rcWake').addEventListener('change',e=>{
+    keepAwake=e.target.checked;save();
+    if(!keepAwake)releaseWake(); else if(playing)requestWake();
+  });
+  if(speechSynthesis.onvoiceschanged!==undefined){ speechSynthesis.onvoiceschanged=()=>{}; speechSynthesis.getVoices(); }
+
+  return {play,pause,jumpSeg,setEp,state:()=>({ep,seg,playing,rate,episodes:episodes.length})};
+})();
 </script>
 </body>
 </html>
