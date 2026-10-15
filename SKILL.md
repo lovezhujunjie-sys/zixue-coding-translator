@@ -60,7 +60,7 @@ description: 开发与迭代「代码翻译官」零基础自学编程 web 应�
 
 JS 语法检查（块注释里别出现 `*/`，上过当）：
 ```bash
-cd ~/.claude/skills/自学编程 && python3 -c "
+cd ~/.Codex/skills/自学编程 && python3 -c "
 import re;html=open('index.html',encoding='utf-8').read()
 open('/tmp/zx.js','w',encoding='utf-8').write(re.search(r'<script>(.*)</script>',html,re.S).group(1))" && node --check /tmp/zx.js && echo OK
 ```
@@ -69,21 +69,21 @@ open('/tmp/zx.js','w',encoding='utf-8').write(re.search(r'<script>(.*)</script>'
 ## 本地预览
 
 ```bash
-python3 -m http.server --directory ~/.claude/skills/自学编程 8138
+python3 -m http.server --directory ~/.Codex/skills/自学编程 8138
 # 浏览器打开 http://localhost:8138/index.html
-# (Claude 的 launch.json 里已有配置名 zixue-coding)
+# (Codex 的 launch.json 里已有配置名 zixue-coding)
 ```
 
 ## 迭代铁律（每次修改优化都要做）
 
 > 用户的明确要求：每次改完都执行这两个动作。
 
-1. **更新本地 skill**：直接编辑 `~/.claude/skills/自学编程/index.html`（及本 SKILL.md），这是唯一真源。
+1. **更新本地 skill**：直接编辑 `~/.Codex/skills/自学编程/index.html`（及本 SKILL.md），这是唯一真源。
 2. **推到 GitHub**：
    ```bash
-   git -C ~/.claude/skills/自学编程 add -A
-   git -C ~/.claude/skills/自学编程 commit -m "描述本次优化"
-   git -C ~/.claude/skills/自学编程 push
+   git -C ~/.Codex/skills/自学编程 add -A
+   git -C ~/.Codex/skills/自学编程 commit -m "描述本次优化"
+   git -C ~/.Codex/skills/自学编程 push
    ```
    推送后 GitHub Pages 自动更新，在线链接即最新版（也是给用户的下载/分享链接）。
 
